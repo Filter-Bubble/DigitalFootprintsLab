@@ -1,8 +1,9 @@
 import React from "react";
-import ColoredBackgroundGrid from "./ColoredBackgroundGrid";
-import background from "../images/background.jpeg";
 import * as Survey from "survey-react";
 import "survey-react/survey.css";
+import ColoredBackgroundGrid from "./ColoredBackgroundGrid";
+import background from "../images/background.jpeg";
+import { Dimmer, Grid, GridColumn, Loader, Segment } from "semantic-ui-react";
 
 Survey.StylesManager.applyTheme("darkblue");
 
@@ -288,13 +289,17 @@ const survey = new Survey.Model(json);
 
 const FinalForm = () => {
   return (
-    <div class="ui grid" style={{ zIndex: 3 }}>
-      <div class="two wide column"></div>
-      <div class="twelve wide column">
+    <Grid
+      style={{
+        height: "calc(100vh + 500px)",
+      }}
+    >
+      <Grid.Column width={2}></Grid.Column>
+      <GridColumn width={12}>
         <Survey.Survey model={survey} />
-      </div>
-      <div class="two wide column"></div>
-    </div>
+      </GridColumn>
+      <Grid.Column width={2}></Grid.Column>
+    </Grid>
   );
 };
 
