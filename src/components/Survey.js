@@ -7,6 +7,9 @@ import { Dimmer, Grid, GridColumn, Loader, Segment } from "semantic-ui-react";
 
 Survey.StylesManager.applyTheme("darkblue");
 
+const range = (start, end, length = end - start) =>
+  Array.from({ length }, (_, i) => start + i).reverse()
+
 const json = {
   title: "Digitale Voetsporen survey",
   description: "Please fill in this short survey about your news habits",
@@ -15,6 +18,161 @@ const json = {
   pages: [
     {
       questions: [
+        {
+          name: "gender",
+          type: "radiogroup",
+          title: "Wat is jouw geslacht?",
+          isRequired: true,
+          choices: ["Man", "Vrouw", "Anders"]
+        },
+        {
+          name: "age",
+          type: "dropdown",
+          title: "In welk jaar ben je geboren?",
+          isRequired: true,
+          choices: 
+          range(1930, 2006)
+        },
+        {
+          name: "education", 
+          type: "dropdown", 
+          title: "Wat is jouw hoogst genoten opleiding?",
+          isRequired: true,
+          hasOther: true,
+          choices: [
+            "Basisonderwijs", 
+            "VMBO/MAVO/VBO", 
+            "HAVO", 
+            "VWO", 
+            "MBO", 
+            "HBO", 
+            "WO (bachelor)", 
+            "WO (master)",
+            "Anders", 
+            "Geen opleiding"
+          ]
+
+        },
+        {
+          name: "provincie",
+          type: "dropdown", 
+          title: "In welke provincie woon je?",
+          isRequired: true,
+          choices: [
+            "Groningen", 
+            "Friesland", 
+            "Drenthe", 
+            "Overijssel", 
+            "Flevoland", 
+            "Gelderland", 
+            "Utrecht", 
+            "Noord-Holland", 
+            "Zuid-Holland", 
+            "Zeeland", 
+            "Noord-Brabant", 
+            "Limburg", 
+            "Ik woon niet in Nederland."
+          ]
+        },
+      ],
+      },
+
+        {questions: [ {
+          name: "pol_interest", 
+          type: "radiogroup", 
+          title: "In het algemeen, hoe geïnteresseerd ben je in politiek?",
+          columnWidth: 3,
+          choices: [
+            "Helemaal niet geïnteresseerd", 
+            2, 
+            3, 
+            4, 
+            5, 
+            6, 
+            7, 
+            8, 
+            9, 
+            "Zeer geïnteresseerd"]
+          },
+        {
+          name: "news_usage",
+          type: "matrix", 
+          title: "Hoeveel dagen in de afgelopen week heb je de volgende bronnen geraadpleegd om iets te weten te komen over politiek en actualiteiten?",
+          columns: [
+{
+  value: 0, 
+  text: "0"
+},
+{
+  value: 1, 
+  text: "1"
+}, 
+{
+  value: 2, 
+  text: "2"
+},
+{
+  value: 3, 
+  text: "3"
+}, 
+{
+  value: 4, 
+  text: "4"
+}, 
+{
+  value: 5, 
+  text: "5"
+}, 
+{
+  value: 6, 
+  text: "6"
+}, 
+{value: 7, 
+text: "7"}
+          ], 
+          rows: [
+            {
+              value: "tv", 
+              text: "Televisie"
+            },
+            {
+              value: "newspaper", 
+              text: "Kranten of opiniebladen (op papier of online)."
+            }, 
+            {
+              value: "radio", 
+              text: "Radio (inclusief podcast en online)"
+            }, 
+            {
+              value: "online",
+              text: "Online nieuwswebsites (zoals nu.nl) of blogs"
+            }, 
+            {
+              value: "social media",
+              text: "Sociale media (bijvoorbeeld Facebook, Twitter)"
+            }, 
+            {
+              value: "yt", 
+              text: "YouTube"
+            }, 
+            {
+              value: "messenger", 
+              text: "Messaging apps (bijvoorbeeld WhatsApp, Facebook messenger)"
+            }, 
+            {
+              value: "talk", 
+              text: "(Offline) gesprekken met mensen"
+            }, 
+            {
+              value: "push",
+              text: "Nieuwsapps of pushberichten op uw telefoon"
+            }, 
+            {
+              value: "search", 
+              text: "Zoekmachines (zoals Google of Bing)"
+            }
+          ]
+        },
         {
           name: "mobile_yn",
           type: "radiogroup",
@@ -263,20 +421,12 @@ const json = {
           title: "Do you use any other services for news? Tell us more about it!",
         },
         {
-          name: "birthdate",
-          type: "text",
-          inputType: "date",
-          title: "Your birthdate:",
-          isRequired: true,
-          autoComplete: "bdate",
-        },
-        {
           name: "email",
           type: "text",
           inputType: "email",
           title: "If you want to receive a portfolio of your results, insert your email here",
           placeHolder: "jon.snow@nightwatch.org",
-          isRequired: true,
+          isRequired: false,
           autoComplete: "email",
           validators: [{ type: "email" }],
         },
@@ -290,9 +440,9 @@ const survey = new Survey.Model(json);
 const FinalForm = () => {
   return (
     <Grid
-      style={{
-        height: "calc(100vh + 500px)",
-      }}
+    style={{
+      height: "calc(100vh + 1000px)",
+    }}
     >
       <Grid.Column width={2}></Grid.Column>
       <GridColumn width={12}>
@@ -302,5 +452,20 @@ const FinalForm = () => {
     </Grid>
   );
 };
+
+const surveyValueChanged = function (sender, options) {
+  const el = document.getElementById(options.name);
+  if(el) {
+      el.value = options.value;
+  }
+};
+
+survey
+    .onComplete
+    .add(function (sender) {
+        document
+            .querySelector('#root')
+            .textContent = "Result JSON:\n" + JSON.stringify(sender.data, null, 3);
+    });
 
 export default FinalForm;
