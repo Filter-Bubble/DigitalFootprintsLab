@@ -1,19 +1,9 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import {
-  Item,
-  Container,
-  Button,
-  Visibility,
-  Header,
-  Modal,
-  Checkbox,
-  ButtonGroup,
-  Dimmer,
-  Loader,
-  Segment,
-} from "semantic-ui-react";
 import db from "apis/dexie";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import {
+  Button, ButtonGroup, Checkbox, Container, Dimmer, Header, Item, Loader, Modal, Segment, Visibility
+} from "semantic-ui-react";
 
 const PAGESIZE = 25;
 const ITEMSTYLE = { color: "white" };
@@ -26,11 +16,11 @@ const propTypes = {
    * The values are objects with a "type" (header, meta or description) and a react inline style
    * See BrowsingHistory.js or SearchHistory.js for examples
    */
-  layout: PropTypes.objects,
+  layout: PropTypes.object,
   /** An array with row IDs to filter on */
   selection: PropTypes.array,
   /** A string to indicate the loading status */
-  loading: PropTypes.string,
+  loading: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
 };
 
 /**

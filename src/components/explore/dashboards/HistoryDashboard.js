@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Divider, Grid, Icon, Button } from "semantic-ui-react";
-
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
-
-import ColoredBackgroundGrid from "./dashboardParts/ColoredBackgroundGrid";
-import background from "images/background.jpeg";
-
-import DataList from "./dashboardParts/DataList";
-import QueryInput from "./dashboardParts/QueryInput";
-import KeyCloud from "./dashboardParts/KeyCloud";
-import TimeLine from "./dashboardParts/TimeLine";
+import { Button, Grid, Icon } from "semantic-ui-react";
 import intersect from "util/intersect";
+import ColoredBackgroundGrid from "./dashboardParts/ColoredBackgroundGrid";
+import DataList from "./dashboardParts/DataList";
+import KeyCloud from "./dashboardParts/KeyCloud";
+import QueryInput from "./dashboardParts/QueryInput";
+import Statistics from "./dashboardParts/Statistics";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
 const leftColumnStyle = {
@@ -74,24 +70,10 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
   }, [querySelection, keyOutSelection]);
 
   return (
-    <ColoredBackgroundGrid background={background} color={"#000000b0"}>
+    <ColoredBackgroundGrid color={"#000000b0"}>
       <Grid divided={"vertically"} style={gridStyle}>
-        <Grid.Column width={4} style={leftColumnStyle}>
-          <Grid.Row centered style={{ padding: "1em", paddingRight: "0" }}>
-            <QueryInput
-              table={table}
-              searchOn={searchOn}
-              setSelection={setQuerySelection}
-              setLoading={setLoading}
-            />
-          </Grid.Row>
-          <Grid.Row style={{ height: "90vh" }}>
-            <DataList table={table} layout={layout} selection={selection} loading={loading} />
-          </Grid.Row>
-        </Grid.Column>
-        <Grid.Column width={12} style={{ padding: "0", paddingLeft: "1em", paddingRight: "1em" }}>
-          <Grid.Row style={{ paddingBottom: "0", paddingRight: "0" }} textAlign="right">
-            <Grid.Column style={{ paddingBottom: "0", paddingRight: "0" }}>
+        <Grid.Row columns={1} style={{ paddingBottom: "0", paddingRight: "0" }} textAlign="right">
+          <Grid.Column style={{ padding: "0", paddingLeft: "1em", paddingRight: "1em" }}>
               <Button.Group floated="right">
                 <Button
                   style={{ background: "#ffffff", margin: "0", marginTop: "0.5em" }}
@@ -103,15 +85,77 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
               </Button.Group>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
-            <KeyCloud
+          <Grid.Row columns={2}>
+            <Grid.Column width={12} style={{ padding: "0", margin: "0" }}>
+              <KeyCloud
+                table={table}
+                field={cloudKey}
+                inSelection={keyInSelection}
+                nWords={50}
+                loading={loading}
+                setOutSelection={setKeyOutSelection}
+              />
+            </Grid.Column>
+            <Grid.Column width={4} style={{ paddingBottom: "0", paddingRight: "0" }}>
+              <Statistics table={table} layout={layout} selection={selection} loading={loading} />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row centered style={{ padding: "1em", paddingRight: "0" }}>
+            <Grid.Column width={16} style={leftColumnStyle}>
+              <QueryInput
+                table={table}
+                searchOn={searchOn}
+                setSelection={setQuerySelection}
+                setLoading={setLoading}
+              />
+              <DataList table={table} layout={layout} selection={selection} loading={loading} />
+            </Grid.Column>
+          </Grid.Row>
+      </Grid>
+      {/* <Grid divided={"vertically"} style={gridStyle}>
+        <Grid.Row centered style={{ padding: "1em", paddingRight: "0" }}>
+          <Grid.Column width={4} style={leftColumnStyle}>
+            <QueryInput
               table={table}
-              field={cloudKey}
-              inSelection={keyInSelection}
-              nWords={50}
-              loading={loading}
-              setOutSelection={setKeyOutSelection}
+              searchOn={searchOn}
+              setSelection={setQuerySelection}
+              setLoading={setLoading}
             />
+            <DataList table={table} layout={layout} selection={selection} loading={loading} />
+        </Grid.Column>
+        </Grid.Row>
+        <Grid.Column width={12} style={{ padding: "0", paddingLeft: "1em", paddingRight: "1em" }}>
+          <Grid.Row style={{ paddingBottom: "0", paddingRight: "0" }} textAlign="right">
+            <Grid.Column style={{ paddingBottom: "0", paddingRight: "0" }}>
+              <Button.Group>
+                <Button
+                  style={{ background: "#ffffff", margin: "0", marginTop: "0.5em" }}
+                  onClick={() => history.push("/datasquare")}
+                >
+                  <Icon name="backward" />
+                  Go back
+                </Button>
+              </Button.Group>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid divided columns='twelve' width={12} style={gridStyle}>
+              <Grid.Row>
+                <Grid.Column width={8} style={{ padding: "0", margin: "0" }}>
+                  <KeyCloud
+                    table={table}
+                    field={cloudKey}
+                    inSelection={keyInSelection}
+                    nWords={50}
+                    loading={loading}
+                    setOutSelection={setKeyOutSelection}
+                  />
+                </Grid.Column>
+                <Grid.Column width={4} style={{ paddingBottom: "0", paddingRight: "0" }}>
+                  <Statistics table={table} layout={layout} selection={selection} loading={loading} />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
           </Grid.Row>
           <Divider style={{ borderColor: "white" }} />
           <Grid.Row>
@@ -124,7 +168,7 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
             />
           </Grid.Row>
         </Grid.Column>
-      </Grid>
+      </Grid> */}
     </ColoredBackgroundGrid>
   );
 };
