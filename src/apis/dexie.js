@@ -81,7 +81,7 @@ class AnnotationDB {
     statistics['total_visits'] = stats.size;
     statistics['max'] = counts.domain_count.max();
     statistics['max_domain'] = counts.iloc({rows: [0]}).domain.iloc([0]).values[0];
-    statistics['mean'] = counts.domain_count.mean();
+    statistics['mean'] = Math.round(counts.domain_count.mean());
     statistics['num_domains'] = counts.size;
     statistics['youtube'] = await this.getTableN("youtube");
     statistics['search'] = await this.getTableN("searchhistory");
