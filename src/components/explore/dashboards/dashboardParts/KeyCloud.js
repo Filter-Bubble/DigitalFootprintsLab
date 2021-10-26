@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { PropTypes } from "prop-types";
-import ReactWordcloud from "react-wordcloud";
-
 import db from "apis/dexie";
-import { Dimmer, Dropdown, Grid, Header, Loader } from "semantic-ui-react";
 import { useLiveQuery } from "dexie-react-hooks";
+import { PropTypes } from "prop-types";
+import React, { useEffect, useState } from "react";
+import ReactWordcloud from "react-wordcloud";
+import { Dimmer, Dropdown, Grid, Header, Loader } from "semantic-ui-react";
 
 const wordcloudOptions = {
   rotations: 0,

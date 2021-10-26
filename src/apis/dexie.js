@@ -1,3 +1,4 @@
+import { DataFrame } from "danfojs";
 import Dexie from "dexie";
 //import hash from "object-hash";
 
@@ -17,7 +18,7 @@ class AnnotationDB {
 
     this.idb.version(2).stores({
       meta: "welcome", // this just serves to keep track of whether db was 'created' via the welcome component. Eventually, this would be a good place to add authentication / token validation
-      browsinghistory: "id++, &[url+date], domain, date", // id++ auto increments ; &[url+date] is unique compound key
+      browsinghistory: "id++, &[url+date], [domain+date], domain, date", // id++ auto increments ; &[url+date] is unique compound key
       youtube: "id++, &[url+date], channel, date",
       searchhistory: "id++, &[query+date], *word, date", // *word is a multientry index that takes an array of words
       datastatus: "name", // names should be the name of a table (browsinghistory, youtube, etc.). Used to keep track of status
@@ -57,6 +58,36 @@ class AnnotationDB {
   async deleteTableIds(table, ids) {
     if (ids.length === 0) return [];
     await this.idb.table(table).where("id").anyOf(ids).delete();
+  }
+
+  async getTableStatistics(selection) {
+    let browser;
+    let statistics = {};
+    if (selection !== null) {
+      browser = await this.idb.table("browsinghistory").where("id").anyOf(selection).delete();
+    } else {
+      browser = await this.idb.table("browsinghistory");
+    }
+
+    const data = await browser.orderBy("domain").toArray();
+    const types = ["string", "string", "string", "string", "string", "string", "string"];
+
+    let stats = new DataFrame(data, { dtypes: types});
+    let group = stats.groupby(["domain"])
+
+    let counts = group.col(["domain"]).count();
+    counts.sort_values({'by': 'domain_count', 'ascending': false,'inplace': true})
+
+    statistics['total_visits'] = stats.size;
+    statistics['max'] = counts.domain_count.max();
+    statistics['max_domain'] = counts.iloc({rows: [0]}).domain.iloc([0]).values[0];
+    statistics['mean'] = Math.round(counts.domain_count.mean());
+    statistics['num_domains'] = counts.size;
+    statistics['youtube'] = await this.getTableN("youtube");
+    statistics['search'] = await this.getTableN("searchhistory");
+
+
+    return statistics;
   }
 
   /**
