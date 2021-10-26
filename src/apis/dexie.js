@@ -13,8 +13,8 @@ class AnnotationDB {
 
     // the following 2 lines are only for developing
     // if enabled (i.e. not commented), the db resets every time the app is started (also when refreshing)
-    // this.idb.delete();
-    // this.idb = new Dexie("DataDonationsLab");
+    this.idb.delete();
+    this.idb = new Dexie("DataDonationsLab");
 
     this.idb.version(2).stores({
       meta: "welcome", // this just serves to keep track of whether db was 'created' via the welcome component. Eventually, this would be a good place to add authentication / token validation

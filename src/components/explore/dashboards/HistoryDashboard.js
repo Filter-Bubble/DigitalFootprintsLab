@@ -112,63 +112,6 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
             </Grid.Column>
           </Grid.Row>
       </Grid>
-      {/* <Grid divided={"vertically"} style={gridStyle}>
-        <Grid.Row centered style={{ padding: "1em", paddingRight: "0" }}>
-          <Grid.Column width={4} style={leftColumnStyle}>
-            <QueryInput
-              table={table}
-              searchOn={searchOn}
-              setSelection={setQuerySelection}
-              setLoading={setLoading}
-            />
-            <DataList table={table} layout={layout} selection={selection} loading={loading} />
-        </Grid.Column>
-        </Grid.Row>
-        <Grid.Column width={12} style={{ padding: "0", paddingLeft: "1em", paddingRight: "1em" }}>
-          <Grid.Row style={{ paddingBottom: "0", paddingRight: "0" }} textAlign="right">
-            <Grid.Column style={{ paddingBottom: "0", paddingRight: "0" }}>
-              <Button.Group>
-                <Button
-                  style={{ background: "#ffffff", margin: "0", marginTop: "0.5em" }}
-                  onClick={() => history.push("/datasquare")}
-                >
-                  <Icon name="backward" />
-                  Go back
-                </Button>
-              </Button.Group>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid divided columns='twelve' width={12} style={gridStyle}>
-              <Grid.Row>
-                <Grid.Column width={8} style={{ padding: "0", margin: "0" }}>
-                  <KeyCloud
-                    table={table}
-                    field={cloudKey}
-                    inSelection={keyInSelection}
-                    nWords={50}
-                    loading={loading}
-                    setOutSelection={setKeyOutSelection}
-                  />
-                </Grid.Column>
-                <Grid.Column width={4} style={{ paddingBottom: "0", paddingRight: "0" }}>
-                  <Statistics table={table} layout={layout} selection={selection} loading={loading} />
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </Grid.Row>
-          <Divider style={{ borderColor: "white" }} />
-          <Grid.Row>
-            <TimeLine
-              table={table}
-              field={"date"}
-              inSelection={timeInSelection}
-              loading={loading}
-              setOutSelection={setTimeOutSelection}
-            />
-          </Grid.Row>
-        </Grid.Column>
-      </Grid> */}
     </ColoredBackgroundGrid>
   );
 };
