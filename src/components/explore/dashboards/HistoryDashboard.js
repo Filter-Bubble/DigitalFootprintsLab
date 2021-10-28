@@ -5,9 +5,10 @@ import { Button, Grid, Icon } from "semantic-ui-react";
 import intersect from "util/intersect";
 import ColoredBackgroundGrid from "./dashboardParts/ColoredBackgroundGrid";
 import DataList from "./dashboardParts/DataList";
-import KeyCloud from "./dashboardParts/KeyCloud";
 import QueryInput from "./dashboardParts/QueryInput";
 import Statistics from "./dashboardParts/Statistics";
+//import KeyCloud from "./dashboardParts/KeyCloud";
+import BubbleChart from "./dashboardParts/BubbleChart";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
 const leftColumnStyle = {
@@ -87,7 +88,7 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
           </Grid.Row>
           <Grid.Row columns={2}>
             <Grid.Column width={12} style={{ padding: "0", margin: "0" }}>
-              <KeyCloud
+              <BubbleChart
                 table={table}
                 field={cloudKey}
                 inSelection={keyInSelection}
