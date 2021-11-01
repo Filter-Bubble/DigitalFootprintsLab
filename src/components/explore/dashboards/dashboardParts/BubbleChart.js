@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { PropTypes } from "prop-types";
 import { useD3 } from '../../../../hooks/useD3.js';
 import * as d3 from 'd3';
-
+import uid from "util/uid";
 import db from "apis/dexie";
 import { Dimmer, Dropdown, Grid, Header, Loader } from "semantic-ui-react";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -62,8 +62,6 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
 
   const format = d3.format(",d");
 
-  let count = 1;
-   
   const ref = useD3(
     (svg) => {
       console.log(data);
@@ -83,13 +81,13 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
           .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
 
       leaf.append("circle")
-          .attr("id", d => (d.leafUid = "id-" + ++count))
+          .attr("id", d => (d.leafUid = uid("leaf")).id)
           .attr("r", d => d.r)
           .attr("fill-opacity", 1.0)
           .attr("fill", d => d3.interpolateWarm(d.data.value/3000));//color(d.data.group));
 
       leaf.append("clipPath")
-          .attr("id", d => (d.clipUid = "id-" + ++count))
+          .attr("id", d => (d.clipUid = uid("clip")).id)
         .append("use")
           .attr("xlink:href", d => d.leafUid.href);
 
@@ -103,7 +101,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
           .text(d => d.data.value > 50 ? d.data.name : '');
 
       leaf.append("title")
-          .text(d => d.data.value > 50 ? `${d.data.title}\n${format(d.value)}` : '');
+          .text(d => `${d.data.name}\n${format(d.value)}`);
       
     },
     [data]
