@@ -5,9 +5,9 @@ import { Button, Grid, Icon } from "semantic-ui-react";
 import intersect from "util/intersect";
 import ColoredBackgroundGrid from "./dashboardParts/ColoredBackgroundGrid";
 import DataList from "./dashboardParts/DataList";
-import KeyCloud from "./dashboardParts/KeyCloud";
 import QueryInput from "./dashboardParts/QueryInput";
 import Statistics from "./dashboardParts/Statistics";
+import FunFacts from "./fun/FunFacts";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
 const leftColumnStyle = {
@@ -86,21 +86,25 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width={12} style={{ padding: "0", margin: "0" }}>
-              <KeyCloud
+            <Grid.Column width={12} style={{ padding: "1em", paddingLeft: "2em", paddingRight: "0"}}>
+              <FunFacts
+                selection={selection}
+                loading={loading}
+              />
+              {/* <KeyCloud
                 table={table}
                 field={cloudKey}
                 inSelection={keyInSelection}
                 nWords={50}
                 loading={loading}
                 setOutSelection={setKeyOutSelection}
-              />
+              /> */}
             </Grid.Column>
-            <Grid.Column width={4} style={{ paddingBottom: "0", paddingRight: "0" }}>
+            <Grid.Column width={4} style={{ padding: "1em", paddingLeft: "0" }}>
               <Statistics table={table} layout={layout} selection={selection} loading={loading} />
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row centered style={{ padding: "1em", paddingRight: "0" }}>
+          <Grid.Row centered style={{ padding: "0"}}>
             <Grid.Column width={16} style={leftColumnStyle}>
               <QueryInput
                 table={table}

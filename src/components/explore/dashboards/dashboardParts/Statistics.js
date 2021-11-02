@@ -1,20 +1,10 @@
 import db from "apis/dexie";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Container, Header, Item } from "semantic-ui-react";
+import { Container, Dimmer, Header, Item, Loader } from "semantic-ui-react";
 import "./Statistics.css";
 
-const PAGESIZE = 25;
-
 const propTypes = {
-  /** The name of the table in DB */
-  table: PropTypes.string,
-  /** An object with layout information.
-   * The keys should be columns in the table
-   * The values are objects with a "type" (header, meta or description) and a react inline style
-   * See BrowsingHistory.js or SearchHistory.js for examples
-   */
-  layout: PropTypes.object,
   /** An array with row IDs to filter on */
   selection: PropTypes.array,
   /** A string to indicate the loading status */
@@ -26,11 +16,11 @@ const propTypes = {
  */
 const Statistics = ({selection, loading }) => {
   const [data, setData] = useState([]);
-  const [n, setN] = useState(1);
-  const [selectionN, setSelectionN] = useState(0);
+  const [loadingData, setLoadingData] = useState(false);
 
   useEffect(() => {
-    fetchFromDb(setN, setSelectionN, setData, selection);
+    console.log("Selection Statistics: ", selection);
+    fetchFromDb(setData, setLoadingData, selection);
   }, [selection, setData]);
 
 
@@ -42,6 +32,9 @@ const Statistics = ({selection, loading }) => {
         background: "#00000087",
       }}
     >
+      <Dimmer active={loading || loadingData}>
+        <Loader />
+      </Dimmer>
       <Header as="h1" align={"center"} style={{ color: "white", padding: "0", margin: "0" }}>
         Statistics
       </Header>
@@ -88,19 +81,28 @@ const Statistics = ({selection, loading }) => {
   );
 };
 
-const fetchFromDb = async (setN, setSelectionN, setData, selection) => {
-  let n = await db.getTableN("browsinghistory");
-  console.log(selection);
-  setSelectionN(selection === null ? n : selection.length);
-  setN(n);
-  let newdata = [];
+const fetchFromDb = async (setData, setLoadingData, selection) => {
+  setLoadingData(true);
+  db.getDataFrame(selection).then(async (stats) => {
 
-  newdata = await db.getTableStatistics(selection);
+    const data = stats.sortBy("domain");
+    let group = data.groupBy("domain");
 
-  // prevents delay after removing items while other filters are still resetting
-  if (newdata !== null && newdata.length === 0) setSelectionN(0);
+    let counts = group.aggregate(group => group.count()).rename("aggregation", "domain_count");
+    counts = counts.sortBy('domain_count', true);
 
-  setData(newdata);
+    const statistics = {};
+    statistics['total_visits'] = data.count();
+    statistics['max'] = counts.stat.max('domain_count');
+    statistics['max_domain'] = counts.getRow(0).get("domain");
+    statistics['mean'] = Math.round(counts.stat.mean("domain_count"));
+    statistics['num_domains'] = counts.count();
+    statistics['youtube'] = await db.getTableN("youtube");
+    statistics['search'] = await db.getTableN("searchhistory");
+
+    setData(statistics);
+    setLoadingData(false);
+  })
 };
 
 Statistics.propTypes = propTypes;
