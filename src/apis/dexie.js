@@ -23,8 +23,6 @@ class AnnotationDB {
       searchhistory: "id++, &[query+date], *word, date", // *word is a multientry index that takes an array of words
       datastatus: "name", // names should be the name of a table (browsinghistory, youtube, etc.). Used to keep track of status
     });
-
-    this.selection = [];
   }
 
   // META
