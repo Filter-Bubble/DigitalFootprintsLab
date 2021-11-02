@@ -1,4 +1,4 @@
-import { DataFrame } from "danfojs";
+import { DataFrame } from "dataframe-js";
 import Dexie from "dexie";
 //import hash from "object-hash";
 
@@ -13,8 +13,8 @@ class AnnotationDB {
 
     // the following 2 lines are only for developing
     // if enabled (i.e. not commented), the db resets every time the app is started (also when refreshing)
-    this.idb.delete();
-    this.idb = new Dexie("DataDonationsLab");
+    // this.idb.delete();
+    // this.idb = new Dexie("DataDonationsLab");
 
     this.idb.version(2).stores({
       meta: "welcome", // this just serves to keep track of whether db was 'created' via the welcome component. Eventually, this would be a good place to add authentication / token validation
@@ -60,34 +60,27 @@ class AnnotationDB {
     await this.idb.table(table).where("id").anyOf(ids).delete();
   }
 
-  async getTableStatistics(selection) {
-    let browser;
-    let statistics = {};
+  async getDataFrame(selection) {
+    let browserdata = [];
+
     if (selection !== null) {
-      browser = await this.idb.table("browsinghistory").where("id").anyOf(selection).delete();
+      browserdata = await db.getTableFromIds("browsinghistory", selection);
     } else {
-      browser = await this.idb.table("browsinghistory");
+      browserdata = await this.idb.table("browsinghistory").toArray();
     }
 
-    const data = await browser.orderBy("domain").toArray();
-    const types = ["string", "string", "string", "string", "string", "string", "string"];
+    let stats = new DataFrame(browserdata);
+    stats = stats.withColumn('dateOnly', (row) => {
+      const date = row.get("date");
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    });
+    stats = stats.withColumn('time', (row) => {
+      const date = row.get("date");
+      return new Date(0,0,0,date.getHours(), date.getMinutes(), 0);
+    });
+    stats = stats.withColumn("day", (row) => (row.get("date").getDay()));
 
-    let stats = new DataFrame(data, { dtypes: types});
-    let group = stats.groupby(["domain"])
-
-    let counts = group.col(["domain"]).count();
-    counts.sort_values({'by': 'domain_count', 'ascending': false,'inplace': true})
-
-    statistics['total_visits'] = stats.size;
-    statistics['max'] = counts.domain_count.max();
-    statistics['max_domain'] = counts.iloc({rows: [0]}).domain.iloc([0]).values[0];
-    statistics['mean'] = Math.round(counts.domain_count.mean());
-    statistics['num_domains'] = counts.size;
-    statistics['youtube'] = await this.getTableN("youtube");
-    statistics['search'] = await this.getTableN("searchhistory");
-
-
-    return statistics;
+    return stats;
   }
 
   /**
