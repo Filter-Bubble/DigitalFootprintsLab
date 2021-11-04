@@ -79,6 +79,7 @@ class AnnotationDB {
       return new Date(0,0,0,date.getHours(), date.getMinutes(), 0);
     });
     stats = stats.withColumn("day", (row) => (row.get("date").getDay()));
+    stats = stats.sortBy("date");
 
     return stats;
   }
