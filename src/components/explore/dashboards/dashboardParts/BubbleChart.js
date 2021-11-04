@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { PropTypes } from "prop-types";
 import { useD3 } from '../../../../hooks/useD3.js';
 import * as d3 from 'd3';
@@ -38,7 +38,7 @@ const propTypes = {
  * Makes a wordcloud for keys, for a given table:field in db
  */
 const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelection }) => {
-
+  const bubbleChartDiv = useRef(null);
   const [keys, setKeys] = useState(new Set([]));
   const [words, setWords] = useState([]);
   const [data, setData] = useState(null);
@@ -64,10 +64,19 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
 
   const ref = useD3(
     (svg) => {
-      console.log(data);
       if (data == null) return;
-
       const root = pack(data);
+
+      const tooltip = d3.select(bubbleChartDiv.current)
+        .append("div")
+        .style("opacity", 1.0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "10px")
+        .style("position", "fixed");
 
       svg
         .attr("viewBox", [0, 0, width, height])
@@ -84,7 +93,21 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
           .attr("id", d => (d.leafUid = uid("leaf")).id)
           .attr("r", d => d.r)
           .attr("fill-opacity", 1.0)
-          .attr("fill", d => d3.interpolateWarm(d.data.value/3000));//color(d.data.group));
+          .attr("fill", d => d3.interpolateWarm(d.data.value/3000))
+          .on("mouseover", function(event, d) {
+            console.log(event);
+            tooltip.transition()
+              .duration(200)
+              .style("opacity", 1.0);
+            tooltip.html(`${d.data.name}\n${format(d.value)}`)
+              .style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 30) + "px");
+          })
+          .on("mouseout", function(d) {
+            tooltip.transition()
+              .duration(500)
+              .style("opacity", 1.0);
+          });
 
       leaf.append("clipPath")
           .attr("id", d => (d.clipUid = uid("clip")).id)
@@ -100,14 +123,12 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
           .attr("y", (d, i, nodes) => `${i - nodes.length / 2 +  0.8}em`)
           .text(d => d.data.value > 50 ? d.data.name : '');
 
-      leaf.append("title")
-          .text(d => `${d.data.name}\n${format(d.value)}`);
-      
     },
     [data]
   );
 
   return (
+    <div ref={bubbleChartDiv}>
     <svg
       ref={ref}
       style={{
@@ -119,6 +140,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
     >
       <g className="plot-area" />
     </svg>
+    </div>
   );
 }
 
