@@ -9,6 +9,7 @@ import QueryInput from "./dashboardParts/QueryInput";
 import Statistics from "./dashboardParts/Statistics";
 //import KeyCloud from "./dashboardParts/KeyCloud";
 import BubbleChart from "./dashboardParts/BubbleChart";
+import TimeLine from "./dashboardParts/TimeLine";
 import FunFacts from "./fun/FunFacts";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
@@ -105,6 +106,15 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
             <Grid.Column width={4} style={{ padding: "1em", paddingLeft: "0" }}>
               <Statistics table={table} layout={layout} selection={selection} loading={loading} />
             </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <TimeLine
+              table={table}
+              field={"date"}
+              inSelection={timeInSelection}
+              loading={loading}
+              setOutSelection={setTimeOutSelection}
+          />
           </Grid.Row>
           <Grid.Row centered style={{ padding: "0"}}>
             <Grid.Column width={16} style={leftColumnStyle}>
