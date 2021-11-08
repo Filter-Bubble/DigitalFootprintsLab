@@ -90,18 +90,18 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
           </Grid.Row>
           <Grid.Row columns={2}>
             <Grid.Column width={12} style={{ padding: "1em", paddingLeft: "2em", paddingRight: "0"}}>
-              <FunFacts
+              {/* <FunFacts
                 selection={selection}
                 loading={loading}
-              />
-              {/* <KeyCloud
+              /> */}
+              <BubbleChart
                 table={table}
                 field={cloudKey}
                 inSelection={keyInSelection}
                 nWords={50}
                 loading={loading}
                 setOutSelection={setKeyOutSelection}
-              /> */}
+              />
             </Grid.Column>
             <Grid.Column width={4} style={{ padding: "1em", paddingLeft: "0" }}>
               <Statistics table={table} layout={layout} selection={selection} loading={loading} />
