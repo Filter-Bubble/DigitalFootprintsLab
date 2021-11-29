@@ -26,7 +26,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   const bubbleChartDiv = useRef(null);
   const [keys, setKeys] = useState(new Set([]));
   const [words, setWords] = useState([]);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({tree: []});
   const [loadingData, setLoadingData] = useState(false);
 
   const n = useLiveQuery(() => db.idb.table(table).count());
@@ -35,19 +35,6 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
     prepareData(table, field, inSelection, setData, setLoadingData, setKeys);
   }, [table, field, inSelection, setData, n, setLoadingData, setKeys]);
 
-  const barData = {
-    table: [
-      { category: 'A', amount: 28 },
-      { category: 'B', amount: 55 },
-      { category: 'C', amount: 43 },
-      { category: 'D', amount: 91 },
-      { category: 'E', amount: 81 },
-      { category: 'F', amount: 53 },
-      { category: 'G', amount: 19 },
-      { category: 'H', amount: 87 },
-  ]
-  };
-
   function handleHover(...args){
     console.log(args);
   }
@@ -55,7 +42,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   const signalListeners = { hover: handleHover };
 
   return (
-    <BarChart data={barData} signalListeners={signalListeners} />
+    <BarChart data={data} signalListeners={signalListeners} />
   );
 }
 
@@ -71,36 +58,34 @@ const prepareData = async (table, field, selection, setData, setLoadingData, set
 
 
   await collection.each((entry) => {
-    //console.log(url);
     let keys = Array.isArray(entry[field]) ? entry[field] : [entry[field]];
     for (let key of keys) {
       if (key !== "") {
-        const url = entry['url'];
-        if (keyTotalObj[key] !== undefined) {
-          keyTotalObj[key][url] = (keyTotalObj[key][url] || 0) + 1;
+
+        // Domain entry
+        if (keyTotalObj[key] === undefined) {
+          keyTotalObj[key] = { name: key, parent: "root", count: 1 };
         }
         else {
-          keyTotalObj[key] = { [url]: 1 };
+          keyTotalObj[key].count++;
+        }
+
+        // Url entry
+        const url = entry['url'];
+        if (url !== key) {
+          if (keyTotalObj[url] === undefined) {
+            keyTotalObj[url] = { name: url, parent: key, count: 1 }
+          }
+          else {
+            keyTotalObj[url].count++;
+          }
         }
       }
     }
   });
 
-  let keyTotal = Object.keys(keyTotalObj).map((domainKey) => {
-    let domainCount = 0;
-    const children = Object.keys(keyTotalObj[domainKey]).map((urlKey) => {
-      const urlCount = keyTotalObj[domainKey][urlKey]
-      domainCount += urlCount;
-      return { name: urlKey, value: urlCount };
-    });
-    return { 
-      name: domainKey,
-      value: domainCount,
-      children: children
-    };
-  });
-
-  setData({ children: keyTotal });
+  let keyTotal = [{name: "root"}, ...Object.values(keyTotalObj)];
+  setData({ tree: keyTotal });
   setLoadingData(false);
 
   setKeys((keys) => new Set([...keys].filter((key) => keyTotalObj[key] != null)));

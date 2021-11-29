@@ -1,84 +1,63 @@
 import { createClassFromSpec } from 'react-vega';
 
 export default createClassFromSpec({spec: {
-  $schema: 'https://vega.github.io/schema/vega/v5.json',
-  width: 600,
-  height: 400,
-  padding: { left: 5, right: 5, top: 5, bottom: 5 },
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An example of a circle packing layout for hierarchical data.",
+  "width": 600,
+  "height": 600,
+  "padding": 5,
+  "autosize": "none",
 
-  data: [
+  "data": [
     {
-      name: 'table',
-      values: [
-      ],
-    },
+      "name": "tree",
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "name",
+          "parentKey": "parent"
+        },
+        {
+          "type": "pack",
+          "field": "count",
+          "sort": {"field": "count"},
+          "size": [{"signal": "width"}, {"signal": "height"}]
+        }
+      ]
+    }
   ],
 
-  signals: [
+  "scales": [
     {
-      name: 'tooltip',
-      value: {},
-      on: [
-        { events: 'rect:mouseover', update: 'datum' },
-        { events: 'rect:mouseout', update: '{}' },
-      ],
-    },
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "tree", "field": "depth"},
+      "range": {"scheme": "category20"}
+    }
   ],
 
-  scales: [
+  "marks": [
     {
-      name: 'xscale',
-      type: 'band',
-      domain: { data: 'table', field: 'category' },
-      range: 'width',
-    },
-    {
-      name: 'yscale',
-      domain: { data: 'table', field: 'amount' },
-      nice: true,
-      range: 'height',
-    },
-  ],
-
-  axes: [
-    { orient: 'bottom', scale: 'xscale' },
-    { orient: 'left', scale: 'yscale' },
-  ],
-
-  marks: [
-    {
-      type: 'rect',
-      from: { data: 'table' },
-      encode: {
-        enter: {
-          x: { scale: 'xscale', field: 'category', offset: 1 },
-          width: { scale: 'xscale', band: 1, offset: -1 },
-          y: { scale: 'yscale', field: 'amount' },
-          y2: { scale: 'yscale', value: 0 },
+      "type": "symbol",
+      "from": {"data": "tree"},
+      "encode": {
+        "enter": {
+          "shape": {"value": "circle"},
+          "fill": {"scale": "color", "field": "depth"},
+          "tooltip": {"signal": "datum.name + (datum.size ? ', ' + datum.size + ' bytes' : '')"}
         },
-        update: {
-          fill: { value: 'steelblue' },
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "size": {"signal": "4 * datum.r * datum.r"},
+          "stroke": {"value": "white"},
+          "strokeWidth": {"value": 0.5}
         },
-        hover: {
-          fill: { value: 'red' },
-        },
-      },
-    },
-    {
-      type: 'text',
-      encode: {
-        enter: {
-          align: { value: 'center' },
-          baseline: { value: 'bottom' },
-          fill: { value: '#333' },
-        },
-        update: {
-          x: { scale: 'xscale', signal: 'tooltip.category', band: 0.5 },
-          y: { scale: 'yscale', signal: 'tooltip.amount', offset: -2 },
-          text: { signal: 'tooltip.amount' },
-          fillOpacity: [{ test: 'datum === tooltip', value: 0 }, { value: 1 }],
-        },
-      },
-    },
-  ],
+        "hover": {
+          "stroke": {"value": "red"},
+          "strokeWidth": {"value": 2}
+        }
+      }
+    }
+  ]
 }});
