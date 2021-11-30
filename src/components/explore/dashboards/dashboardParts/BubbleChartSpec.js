@@ -142,7 +142,15 @@ export default createClassFromSpec({spec: {
     {
       "name": "size",
       "update": "width / span(xdom)"
-    }
+    },
+
+    {
+      "name": "navigate",
+      "value": {},
+      "on": [
+        { "events": "*:dblclick", "update": "datum" }
+      ]
+    },
   ],
 
   "data": [

@@ -38,8 +38,14 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   function handleHover(...args){
     console.log(args);
   }
-  
-  const signalListeners = { hover: handleHover };
+
+  function handleNavigate(signal, datum) {
+    // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
+    const newWindow = window.open(datum.name, '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
+  }
+
+  const signalListeners = { hover: handleHover, navigate: handleNavigate };
 
   return (
     <BarChart data={data} signalListeners={signalListeners} />
