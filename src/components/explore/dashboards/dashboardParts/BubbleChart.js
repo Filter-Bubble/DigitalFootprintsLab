@@ -23,9 +23,7 @@ const propTypes = {
  * Makes a wordcloud for keys, for a given table:field in db
  */
 const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelection }) => {
-  const bubbleChartDiv = useRef(null);
   const [keys, setKeys] = useState(new Set([]));
-  const [words, setWords] = useState([]);
   const [data, setData] = useState({tree: []});
   const [loadingData, setLoadingData] = useState(false);
 
@@ -35,17 +33,13 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
     prepareData(table, field, inSelection, setData, setLoadingData, setKeys);
   }, [table, field, inSelection, setData, n, setLoadingData, setKeys]);
 
-  function handleHover(...args){
-    console.log(args);
-  }
-
   function handleNavigate(signal, datum) {
     // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
     const newWindow = window.open(datum.name, '_blank', 'noopener,noreferrer')
     if (newWindow) newWindow.opener = null
   }
 
-  const signalListeners = { hover: handleHover, navigate: handleNavigate };
+  const signalListeners = { navigate: handleNavigate };
 
   return (
     <BarChart data={data} signalListeners={signalListeners} />
