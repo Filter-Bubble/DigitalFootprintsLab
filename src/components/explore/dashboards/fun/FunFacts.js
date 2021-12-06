@@ -2,7 +2,7 @@ import db from "apis/dexie";
 import { DateTime } from "luxon";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { Container, Dimmer, Header, Item, Loader } from "semantic-ui-react";
+import { Container, Dimmer, Header, Item, Loader, Card } from "semantic-ui-react";
 
 
 const propTypes = {
@@ -28,38 +28,44 @@ const FunFacts = ({selection, loading}) => {
       <Header as="h1" align={"center"} style={{ color: "white", padding: "0", margin: "0" }}>
         Fun Facts
       </Header>
-      <Item.Group>
-        <Item>
-          <Item.Content>
-            <Item.Header style={{ color: "white"}}>Your most active day online is {data.most_active_day}</Item.Header>
-          </Item.Content>
-        </Item>
-        <Item>
-          <Item.Content>
-            <Item.Header style={{ color: "white"}}>You usually start browsing at {data.typical_start}</Item.Header>
-          </Item.Content>
-        </Item>
-        <Item>
-          <Item.Content>
-            <Item.Header style={{ color: "white"}}>You usually stop browsing at {data.typical_end}</Item.Header>
-          </Item.Content>
-        </Item>
-        <Item>
-          <Item.Content>
-            <Item.Header style={{ color: "white"}}>On {data.most_visits_day} you visited {data.most_visits_in_1_day} websites!</Item.Header>
-          </Item.Content>
-        </Item>
-        <Item>
-          <Item.Content>
-            <Item.Header style={{ color: "white"}}>The longest period between visits is {data.most_days_between_visits} days</Item.Header>
-          </Item.Content>
-        </Item>
-        <Item>
-          <Item.Content>
-            <Item.Header style={{ color: "white"}}>50% of your browsing happens after {data.middle_point}</Item.Header>
-          </Item.Content>
-        </Item>
-      </Item.Group>
+      <Card.Group>
+        <Card>
+          <Card.Content>
+            <Card.Header>Most active</Card.Header>
+            <Card.Description>Your most active day online is <b>{data.most_active_day}</b></Card.Description>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content>
+            <Card.Header>Wake up</Card.Header>
+            <Card.Description>You usually start browsing at <b>{data.typical_start}</b></Card.Description>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content>
+            <Card.Header>Sleep</Card.Header>
+            <Card.Description>You usually stop browsing at <b>{data.typical_end}</b></Card.Description>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content>
+            <Card.Header>Most visits</Card.Header>
+            <Card.Description>On <b>{data.most_visits_day}</b> you visited <b>{data.most_visits_in_1_day}</b> websites!</Card.Description>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content>
+            <Card.Header>Taking a break</Card.Header>
+            <Card.Description>The longest period between visits is <b>{data.most_days_between_visits} days</b></Card.Description>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content>
+            <Card.Header>Morning person?</Card.Header>
+            <Card.Description>50% of your browsing happens after <b>{data.middle_point}</b></Card.Description>
+          </Card.Content>
+        </Card>
+      </Card.Group>
     </Container>
   );
 };

@@ -5,7 +5,7 @@ import { Button, ButtonGroup, Dimmer, Grid, Loader } from "semantic-ui-react";
 import db from "apis/dexie";
 import createColors from "util/createColors";
 
-const COLORS = createColors(100, "white", "#0C1D35", "#954856");
+const COLORS = createColors(100, "white", "#c28c95", "#954856");
 const ZEROCOLOR = ["white"];
 const LEGENDS = [
   {
@@ -126,7 +126,7 @@ const TimeLine = ({ table, field, inSelection, loading, setOutSelection }) => {
             colors={days.some((day) => day.value > 0) ? COLORS : ZEROCOLOR}
             margin={MARGIN}
             yearSpacing={35}
-            monthSpacing={30}
+            monthSpacing={2}
             monthBorderColor="#ffffff"
             dayBorderWidth={2}
             dayBorderColor="#150a0a2e"

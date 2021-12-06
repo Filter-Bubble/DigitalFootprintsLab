@@ -35,7 +35,7 @@ const propTypes = {
 /**
  * Renders a dashboard page with components for browsing and visualizing history data
  */
-const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
+const GoodiesDashboard = ({ searchOn, layout, table, cloudKey }) => {
   const history = useHistory();
 
   const [loading, setLoading] = useState(false);
@@ -72,11 +72,6 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
     setTimeInSelection(intersect([querySelection, keyOutSelection]));
   }, [querySelection, keyOutSelection]);
 
-  const donateData = () => {
-    //TODO: submit filtered data
-    history.push("/goodies");
-  }
-
   return (
     <ColoredBackgroundGrid color={"#000000b0"}>
       <Grid divided={"vertically"} style={gridStyle}>
@@ -93,41 +88,25 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
               </Button.Group>
             </Grid.Column>
           </Grid.Row>
+          <Grid.Row>
+            <TimeLine
+              table={table}
+              field={"date"}
+              inSelection={timeInSelection}
+              loading={loading}
+              setOutSelection={setTimeOutSelection}
+          />
+          </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width={12} style={{ padding: "1em", paddingLeft: "2em", paddingRight: "0"}}>
-              <BubbleChart
-                table={table}
-                field={cloudKey}
-                inSelection={keyInSelection}
-                nWords={50}
-                loading={loading}
-                setOutSelection={setKeyOutSelection}
-              />
-            </Grid.Column>
-            <Grid.Column width={4} style={{ padding: "1em", paddingLeft: "0" }}>
-              <Statistics table={table} layout={layout} selection={selection} loading={loading} />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row centered style={{ padding: "0"}}>
-            <Grid.Column width={16} style={leftColumnStyle}>
-              <QueryInput
-                table={table}
-                searchOn={searchOn}
-                setSelection={setQuerySelection}
-                setLoading={setLoading}
-              />
-              <DataList table={table} layout={layout} selection={selection} loading={loading} />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row centered style={{ padding: "0"}}>
-            <Grid.Column width={16} style={leftColumnStyle}>
-              <Button onClick={() => donateData()}>Donate your data!</Button>
-            </Grid.Column>
+            <FunFacts
+              selection={selection}
+              loading={loading}
+            />
           </Grid.Row>
       </Grid>
     </ColoredBackgroundGrid>
   );
 };
 
-HistoryDashboard.propTypes = propTypes;
-export default HistoryDashboard;
+GoodiesDashboard.propTypes = propTypes;
+export default GoodiesDashboard;
