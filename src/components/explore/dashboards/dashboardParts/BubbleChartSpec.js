@@ -2,7 +2,6 @@ import { createClassFromSpec } from 'react-vega';
 
 export default createClassFromSpec({spec: {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "An example of a circle packing layout for hierarchical data.",
   "width": 500,
   "height": 500,
   "padding": 10,
@@ -29,7 +28,7 @@ export default createClassFromSpec({spec: {
 
   "signals": [
     {
-      "name": "contextmenu",
+      "name": "selectedDatum",
       "value": {},
       "on": [
         { "events": "*:click", "update": "datum" }

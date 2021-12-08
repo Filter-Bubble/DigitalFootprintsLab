@@ -3,7 +3,7 @@ import { PropTypes } from "prop-types";
 import db from "apis/dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import BubbleChartSpec from './BubbleChartSpec';
-import { Menu } from "semantic-ui-react";
+import { Card, Button, Image } from "semantic-ui-react";
 
 const propTypes = {
   /** The name of the table in db */
@@ -35,12 +35,8 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
     prepareData(table, field, inSelection, setData, setLoadingData, setKeys);
   }, [table, field, inSelection, setData, n, setLoadingData, setKeys]);
 
-  function handleNavigate(signal, datum) {
-    console.log(datum);
-    setSelectedDatum(datum);
-    // // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
-    // const newWindow = window.open(datum.name, '_blank', 'noopener,noreferrer')
-    // if (newWindow) newWindow.opener = null
+  const onSelectedDatum = (signal, datum) => {
+    setSelectedDatum(datum.name !== 'root' ? datum : null);
   }
 
   const deleteSelectedDatum = () => {
@@ -48,10 +44,10 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
     setSelectedDatum(null);
   };
 
-  const signalListeners = { contextmenu: handleNavigate };
+  const signalListeners = { selectedDatum: onSelectedDatum };
 
-  const contextMenuStyle = {
-    "z-index": 1,
+  const popupStyle = {
+    zIndex: 1,
     position: "absolute",
     left: selectedDatum ? selectedDatum.x : 0,
     top: selectedDatum ? selectedDatum.y : 0
@@ -60,15 +56,33 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   return (
     <div style={{position: "relative"}}>
       <BubbleChartSpec data={data} signalListeners={signalListeners} actions={false} />
-      { selectedDatum && <div id="contextMenu" style={contextMenuStyle}>
-        <Menu pointing vertical>
-          <Menu.Item
-            name="delete"
-            content={`Delete ${selectedDatum.name}`}
-            active={false}
-            onClick={deleteSelectedDatum}
-          />
-        </Menu>
+      { selectedDatum && <div style={popupStyle}>
+        <Card>
+          <Card.Content>
+            <Image
+              floated='left'
+              size='mini'
+              src='/favicon.ico' //TODO
+            />
+            <Button
+              basic
+              floated='right'
+              size='mini'
+              icon='close'
+              onClick={() => setSelectedDatum(null)}
+            />
+            <Card.Header>{selectedDatum.name}</Card.Header>
+            <Card.Meta>{`${selectedDatum.count} visits`}</Card.Meta>
+            <Card.Description>Category: TODO</Card.Description>
+          </Card.Content>
+          <Card.Content extra>
+            <div className='ui two buttons'>
+              <Button basic color='red' onClick={deleteSelectedDatum}>
+                Delete
+              </Button>
+            </div>
+          </Card.Content>
+        </Card>
       </div>}
     </div>
   );
