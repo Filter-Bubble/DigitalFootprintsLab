@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { PropTypes } from "prop-types";
 import db from "apis/dexie";
 import { useLiveQuery } from "dexie-react-hooks";
-import BarChart from './BubbleChartSpec';
+import BubbleChartSpec from './BubbleChartSpec';
+import { Menu } from "semantic-ui-react";
 
 const propTypes = {
   /** The name of the table in db */
@@ -26,6 +27,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   const [keys, setKeys] = useState(new Set([]));
   const [data, setData] = useState({tree: []});
   const [loadingData, setLoadingData] = useState(false);
+  const [selectedDatum, setSelectedDatum] = useState(null);
 
   const n = useLiveQuery(() => db.idb.table(table).count());
 
@@ -34,15 +36,41 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   }, [table, field, inSelection, setData, n, setLoadingData, setKeys]);
 
   function handleNavigate(signal, datum) {
-    // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
-    const newWindow = window.open(datum.name, '_blank', 'noopener,noreferrer')
-    if (newWindow) newWindow.opener = null
+    console.log(datum);
+    setSelectedDatum(datum);
+    // // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
+    // const newWindow = window.open(datum.name, '_blank', 'noopener,noreferrer')
+    // if (newWindow) newWindow.opener = null
   }
 
-  const signalListeners = { navigate: handleNavigate };
+  const deleteSelectedDatum = () => {
+    console.log("delete");
+    setSelectedDatum(null);
+  };
+
+  const signalListeners = { contextmenu: handleNavigate };
+
+  const contextMenuStyle = {
+    "z-index": 1,
+    position: "absolute",
+    left: selectedDatum ? selectedDatum.x : 0,
+    top: selectedDatum ? selectedDatum.y : 0
+  };
 
   return (
-    <BarChart data={data} signalListeners={signalListeners} />
+    <div style={{position: "relative"}}>
+      <BubbleChartSpec data={data} signalListeners={signalListeners} actions={false} />
+      { selectedDatum && <div id="contextMenu" style={contextMenuStyle}>
+        <Menu pointing vertical>
+          <Menu.Item
+            name="delete"
+            content={`Delete ${selectedDatum.name}`}
+            active={false}
+            onClick={deleteSelectedDatum}
+          />
+        </Menu>
+      </div>}
+    </div>
   );
 }
 
@@ -61,6 +89,7 @@ const prepareData = async (table, field, selection, setData, setLoadingData, set
     let keys = Array.isArray(entry[field]) ? entry[field] : [entry[field]];
     for (let key of keys) {
       if (key !== "") {
+        key = key.split('.').slice(-2).join('.')
 
         // Domain entry
         if (keyTotalObj[key] === undefined) {
@@ -70,16 +99,16 @@ const prepareData = async (table, field, selection, setData, setLoadingData, set
           keyTotalObj[key].count++;
         }
 
-        // Url entry
-        const url = entry['url'];
-        if (url !== key) {
-          if (keyTotalObj[url] === undefined) {
-            keyTotalObj[url] = { name: url, parent: key, count: 1 }
-          }
-          else {
-            keyTotalObj[url].count++;
-          }
-        }
+        // // Url entry
+        // const url = entry['url'];
+        // if (url !== key) {
+        //   if (keyTotalObj[url] === undefined) {
+        //     keyTotalObj[url] = { name: url, parent: key, count: 1 }
+        //   }
+        //   else {
+        //     keyTotalObj[url].count++;
+        //   }
+        // }
       }
     }
   });
