@@ -3,11 +3,7 @@ import HistoryDashboard from "./dashboards/HistoryDashboard";
 
 const SEARCHON = ["channel", "title"];
 
-const LAYOUT = {
-  channel: { type: "header", style: { color: "white" } },
-  title: { type: "description", style: { color: "white" } },
-  date: { type: "meta", style: { color: "white", fontStyle: "italic" } },
-};
+const LAYOUT = [ "date", "channel", "title" ];
 
 /**
  * Renders a HistoryDashboard for the youtube history data.

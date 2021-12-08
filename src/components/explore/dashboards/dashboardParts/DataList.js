@@ -2,11 +2,10 @@ import db from "apis/dexie";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import {
-  Button, ButtonGroup, Checkbox, Container, Dimmer, Header, Item, Loader, Modal, Segment, Visibility
+  Button, ButtonGroup, Checkbox, Container, Dimmer, Header, Loader, Modal, Segment, Table, Visibility
 } from "semantic-ui-react";
 
 const PAGESIZE = 25;
-const ITEMSTYLE = { color: "white" };
 
 const propTypes = {
   /** The name of the table in DB */
@@ -54,63 +53,29 @@ const DataList = ({ table, layout, selection, loading }) => {
   };
 
   const createItem = (item) => {
-    return Object.keys(layout).map((field, i) => {
+    return layout.map((field, i) => {
       let content = item[field];
       if (content instanceof Date) content = content.toISOString().slice(0, 19).replace(/T/g, " ");
-      if (field === "url") {
-        let url = new URL(content);
-        content = (
-          <p>
-            <font style={{ fontSize: "1.5em", color: "lightblue" }}>{url.hostname}</font>
-            {url.pathname}
-          </p>
-        );
-      }
-
-      if (layout[field].type === "header")
-        return (
-          <Item.Header key={i} style={layout[field].style}>
-            {content}
-          </Item.Header>
-        );
-      if (layout[field].type === "meta")
-        return (
-          <Item.Meta key={i} style={layout[field].style}>
-            {content}
-          </Item.Meta>
-        );
-      if (layout[field].type === "description")
-        return (
-          <Item.Description key={i} style={layout[field].style}>
-            {content}
-          </Item.Description>
-        );
-      if (layout[field].type === "extra")
-        return (
-          <Item.Extra key={i} style={layout[field].style}>
-            {content}
-          </Item.Extra>
-        );
-      return { content };
+      return (<Table.Cell>{content}</Table.Cell>)
     });
   };
 
   const createItems = () => {
     if (data === null || data.length === 0) return null;
 
-    const image = Object.keys(layout).find((field) => layout[field].type === "image");
+    //const image = Object.keys(layout).find((field) => layout[field].type === "image");
 
     return data.map((item, i) => {
       return (
-        <Item key={i} style={ITEMSTYLE}>
-          {image ? <Item.Image size="tiny" src={item[image]} /> : null}
-          <Button
-            onClick={() => setConfirm({ ...confirm, open: true, itemIds: [item.id] })}
-            icon="trash alternate"
-            style={{ padding: "0", color: "black", height: "3em", background: "#b23434bd" }}
-          />
-          <Item.Content>{createItem(item)}</Item.Content>
-        </Item>
+        <Table.Row key={i}>
+          {/* {image ? <Item.Image size="tiny" src={item[image]} /> : null} */}
+          <Table.Cell>
+            <Button
+              onClick={() => setConfirm({ ...confirm, open: true, itemIds: [item.id] })}
+              icon="trash alternate" />
+          </Table.Cell>
+          {createItem(item)}
+        </Table.Row>
       );
     });
   };
@@ -119,6 +84,7 @@ const DataList = ({ table, layout, selection, loading }) => {
     <Container
       style={{
         height: "98%",
+        width: "100%",
         padding: "0",
         background: "#00000087",
       }}
@@ -139,9 +105,20 @@ const DataList = ({ table, layout, selection, loading }) => {
         </Header>
       </Segment>
 
-      <Container style={{ height: "95%", overflowY: "auto" }}>
+      <Container style={{ width: "100%", height: "50%", overflowY: "auto" }}>
         <Visibility continuous onBottomVisible={onBottomVisible}>
-          <Item.Group unstackable>{createItems()}</Item.Group>
+          <Table striped fixed>
+            <Table.Header>
+              <Table.Row>
+                { ['', ...layout].map((field, i) =>
+                  (<Table.HeaderCell width={[1, 3, 10, 10][i]} style={{top: "0px", position: "sticky", "z-index": "2"}}>
+                    {field.charAt(0).toUpperCase() + field.slice(1)}
+                  </Table.HeaderCell>))
+                }
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>{createItems()}</Table.Body>
+          </Table>
         </Visibility>
       </Container>
 

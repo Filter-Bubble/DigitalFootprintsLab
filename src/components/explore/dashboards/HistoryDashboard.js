@@ -9,15 +9,12 @@ import QueryInput from "./dashboardParts/QueryInput";
 import Statistics from "./dashboardParts/Statistics";
 //import KeyCloud from "./dashboardParts/KeyCloud";
 import BubbleChart from "./dashboardParts/BubbleChart";
-import TimeLine from "./dashboardParts/TimeLine";
-import FunFacts from "./fun/FunFacts";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
 const leftColumnStyle = {
   paddingLeft: "2em",
   paddingRight: "1em",
   paddingTop: "0",
-  borderRight: "2px solid white",
   height: "100vh",
 };
 
@@ -109,7 +106,7 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered style={{ padding: "0"}}>
-            <Grid.Column width={16} style={leftColumnStyle}>
+            <Grid.Column width={14} style={leftColumnStyle}>
               <QueryInput
                 table={table}
                 searchOn={searchOn}

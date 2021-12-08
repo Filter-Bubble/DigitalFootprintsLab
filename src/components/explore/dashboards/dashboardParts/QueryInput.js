@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Button, Input } from "semantic-ui-react";
@@ -43,11 +43,9 @@ const QueryInput = ({ table, searchOn, setSelection, setLoading }) => {
       value={search}
       icon={
         <Button
-          compact
-          icon="window close"
+          icon="close"
           onClick={() => setSearch("")}
           size="huge"
-          style={{ color: "white", height: "1em", background: "#ffffff00" }}
         />
       }
       onChange={(e, d) => setSearch(d.value)}
