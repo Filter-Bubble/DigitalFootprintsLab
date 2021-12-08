@@ -25,7 +25,7 @@ const propTypes = {
   /** an Array indicating which fields in table should be used in the fulltext search */
   searchOn: PropTypes.array.isRequired,
   /** an object that conveys which fields in the table are shown in the DataList */
-  layout: PropTypes.object.isRequired,
+  layout: PropTypes.array.isRequired,
   /** the name of the table in the indexedDB */
   table: PropTypes.string.isRequired,
   /** the field in the table that is used in the wordcloud. Can also be a multientry index (e.g., an indexed array of words in indexedDB) */

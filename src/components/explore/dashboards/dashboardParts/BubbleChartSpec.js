@@ -3,9 +3,9 @@ import { createClassFromSpec } from 'react-vega';
 export default createClassFromSpec({spec: {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "description": "An example of a circle packing layout for hierarchical data.",
-  "width": 600,
-  "height": 600,
-  "padding": 5,
+  "width": 500,
+  "height": 500,
+  "padding": 10,
   "autosize": "none",
 
   "data": [

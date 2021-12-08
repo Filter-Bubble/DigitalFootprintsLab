@@ -22,7 +22,7 @@ const propTypes = {
   /** an Array indicating which fields in table should be used in the fulltext search */
   searchOn: PropTypes.array.isRequired,
   /** an object that conveys which fields in the table are shown in the DataList */
-  layout: PropTypes.object.isRequired,
+  layout: PropTypes.array.isRequired,
   /** the name of the table in the indexedDB */
   table: PropTypes.string.isRequired,
   /** the field in the table that is used in the wordcloud. Can also be a multientry index (e.g., an indexed array of words in indexedDB) */
@@ -90,8 +90,8 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
               </Button.Group>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row columns={2}>
-            <Grid.Column width={12} style={{ padding: "1em", paddingLeft: "2em", paddingRight: "0"}}>
+          <Grid.Row centered columns={2}>
+            <Grid.Column width={10} style={{ padding: "1em", paddingLeft: "2em", paddingRight: "0"}}>
               <BubbleChart
                 table={table}
                 field={cloudKey}
@@ -117,7 +117,7 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered style={{ padding: "0"}}>
-            <Grid.Column width={16} style={leftColumnStyle}>
+            <Grid.Column width={14} style={leftColumnStyle}>
               <Button onClick={() => donateData()}>Donate your data!</Button>
             </Grid.Column>
           </Grid.Row>

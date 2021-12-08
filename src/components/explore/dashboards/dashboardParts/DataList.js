@@ -15,7 +15,7 @@ const propTypes = {
    * The values are objects with a "type" (header, meta or description) and a react inline style
    * See BrowsingHistory.js or SearchHistory.js for examples
    */
-  layout: PropTypes.object,
+  layout: PropTypes.array,
   /** An array with row IDs to filter on */
   selection: PropTypes.array,
   /** A string to indicate the loading status */
@@ -56,7 +56,7 @@ const DataList = ({ table, layout, selection, loading }) => {
     return layout.map((field, i) => {
       let content = item[field];
       if (content instanceof Date) content = content.toISOString().slice(0, 19).replace(/T/g, " ");
-      return (<Table.Cell>{content}</Table.Cell>)
+      return (<Table.Cell key={i+1}>{content}</Table.Cell>)
     });
   };
 
@@ -69,7 +69,7 @@ const DataList = ({ table, layout, selection, loading }) => {
       return (
         <Table.Row key={i}>
           {/* {image ? <Item.Image size="tiny" src={item[image]} /> : null} */}
-          <Table.Cell>
+          <Table.Cell key="0">
             <Button
               onClick={() => setConfirm({ ...confirm, open: true, itemIds: [item.id] })}
               icon="trash alternate" />
@@ -111,7 +111,7 @@ const DataList = ({ table, layout, selection, loading }) => {
             <Table.Header>
               <Table.Row>
                 { ['', ...layout].map((field, i) =>
-                  (<Table.HeaderCell width={[1, 3, 10, 10][i]} style={{top: "0px", position: "sticky", "z-index": "2"}}>
+                  (<Table.HeaderCell key={i} width={[1, 3, 10, 10][i]} style={{top: "0px", position: "sticky", zIndex: "2"}}>
                     {field.charAt(0).toUpperCase() + field.slice(1)}
                   </Table.HeaderCell>))
                 }
