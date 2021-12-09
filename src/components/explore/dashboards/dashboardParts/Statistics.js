@@ -28,8 +28,9 @@ const Statistics = ({selection, loading }) => {
     <Container
       style={{
         height: "98%",
-        padding: "0",
-        background: "#00000087",
+        padding: "20px",
+        background: "#55555587",
+        borderRadius: "10px"
       }}
     >
       <Dimmer active={loading || loadingData}>
@@ -48,8 +49,7 @@ const Statistics = ({selection, loading }) => {
         <Item>
           <Item.Content>
             <Item.Header style={{ color: "white"}}>Most Visited Domain</Item.Header>
-            <Item.Description style={{ color: "white"}}>{data.max_domain}</Item.Description>
-            <Item.Extra style={{ color: "white"}}>{data.max}</Item.Extra>
+            <Item.Description style={{ color: "white"}}>{data.max_domain} ({data.max})</Item.Description>
           </Item.Content>
         </Item>
         <Item>

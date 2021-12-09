@@ -37,17 +37,13 @@ const QueryInput = ({ table, searchOn, setSelection, setLoading }) => {
 
   return (
     <Input
-      fluid
       label="Search data"
       loading={selectionStatus === "searching"}
       value={search}
       icon={
         <Button
-          compact
-          icon="window close"
+          icon="close"
           onClick={() => setSearch("")}
-          size="huge"
-          style={{ color: "white", height: "1em", background: "#ffffff00" }}
         />
       }
       onChange={(e, d) => setSearch(d.value)}
