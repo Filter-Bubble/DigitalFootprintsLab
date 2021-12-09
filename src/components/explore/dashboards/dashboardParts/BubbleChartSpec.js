@@ -2,9 +2,9 @@ import { createClassFromSpec } from 'react-vega';
 
 export default createClassFromSpec({spec: {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 500,
-  "height": 500,
-  "padding": 10,
+  "width": 700,
+  "height": 420,
+  "padding": 0,
   "autosize": "none",
 
   "data": [
@@ -21,6 +21,10 @@ export default createClassFromSpec({spec: {
           "field": "count",
           "sort": {"field": "count"},
           "size": [{"signal": "width"}, {"signal": "height"}]
+        },
+        {
+          "type": "filter",
+          "expr": "datum.name != 'root'"
         }
       ]
     }
@@ -31,7 +35,7 @@ export default createClassFromSpec({spec: {
       "name": "selectedDatum",
       "value": {},
       "on": [
-        { "events": "*:click", "update": "datum" }
+        { "events": "click", "update": "datum", "force": "true" }
       ]
     }
   ],
@@ -60,7 +64,7 @@ export default createClassFromSpec({spec: {
           "y": {"field": "y"},
           "size": {"signal": "4 * datum.r * datum.r"},
           "stroke": {"value": "white"},
-          "strokeWidth": {"value": 0.5}
+          "strokeWidth": {"value": 0.8}
         },
         "hover": {
           "stroke": {"value": "red"},

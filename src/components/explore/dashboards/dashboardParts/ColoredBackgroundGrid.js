@@ -15,7 +15,7 @@ const ColoredBackgroundGrid = ({ children, background, color }) => {
         style={{
           zIndex: 1,
           top: 0,
-          bottom: 0,
+          bottom: "100px",
           right: 0,
           left: 0,
           background: color,
@@ -24,14 +24,13 @@ const ColoredBackgroundGrid = ({ children, background, color }) => {
       />
       <Grid
         style={{
-          height: "100vh",
+          height: "90vh",
           overflow: "auto",
           backgroundSize: "100% 100%",
-
           backgroundImage: `url(${background})`,
         }}
       >
-        <div style={{ zIndex: 2 }}>{children}</div>
+        <div style={{ zIndex: 2, width: "100%", padding: "0px" }}>{children}</div>
       </Grid>
     </>
   );

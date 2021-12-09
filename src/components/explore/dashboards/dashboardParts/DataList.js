@@ -83,14 +83,14 @@ const DataList = ({ table, layout, selection, loading }) => {
   return (
     <Container
       style={{
-        height: "98%",
+        height: "100%",
         width: "100%",
         padding: "0",
         background: "#00000087",
       }}
     >
       <Segment style={{ background: "white" }}>
-        <Header textAlign="center" as="h2" style={{ color: "black" }}>
+        <Header textAlign="center" style={{ color: "black" }}>
           <Dimmer active={loading}>
             <Loader />
           </Dimmer>
@@ -105,7 +105,7 @@ const DataList = ({ table, layout, selection, loading }) => {
         </Header>
       </Segment>
 
-      <Container style={{ width: "100%", height: "50%", overflowY: "auto" }}>
+      <Container style={{ width: "100%", height: "100%", overflowY: "auto" }}>
         <Visibility continuous onBottomVisible={onBottomVisible}>
           <Table striped fixed>
             <Table.Header>

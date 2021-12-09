@@ -36,7 +36,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   }, [table, field, inSelection, setData, n, setLoadingData, setKeys]);
 
   const onSelectedDatum = (signal, datum) => {
-    setSelectedDatum(datum.name !== 'root' ? datum : null);
+    setSelectedDatum(datum);
   }
 
   const deleteSelectedDatum = () => {

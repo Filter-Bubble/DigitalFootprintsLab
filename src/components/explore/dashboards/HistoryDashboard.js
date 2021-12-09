@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import { Button, Grid, Icon } from "semantic-ui-react";
+import { Button, Grid, Icon, Segment } from "semantic-ui-react";
 import intersect from "util/intersect";
 import ColoredBackgroundGrid from "./dashboardParts/ColoredBackgroundGrid";
 import DataList from "./dashboardParts/DataList";
@@ -11,12 +11,6 @@ import Statistics from "./dashboardParts/Statistics";
 import BubbleChart from "./dashboardParts/BubbleChart";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
-const leftColumnStyle = {
-  paddingLeft: "2em",
-  paddingRight: "1em",
-  paddingTop: "0",
-  height: "100vh",
-};
 
 const propTypes = {
   /** an Array indicating which fields in table should be used in the fulltext search */
@@ -75,21 +69,24 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
   }
 
   return (
+    <Fragment>
     <ColoredBackgroundGrid color={"#000000b0"}>
+      <Segment>
+        <Button
+          style={{ background: "#ffffff", margin: "0", float: "left" }}
+          onClick={() => history.push("/datasquare")}>
+          <Icon name="backward" />
+          Go back
+        </Button>
+        <div style={{display: "table", margin: "0 auto"}}>
+          <QueryInput
+              table={table}
+              searchOn={searchOn}
+              setSelection={setQuerySelection}
+              setLoading={setLoading} />
+        </div>
+      </Segment>
       <Grid divided={"vertically"} style={gridStyle}>
-        <Grid.Row columns={1} style={{ paddingBottom: "0", paddingRight: "0" }} textAlign="right">
-          <Grid.Column style={{ padding: "0", paddingLeft: "1em", paddingRight: "1em" }}>
-              <Button.Group floated="right">
-                <Button
-                  style={{ background: "#ffffff", margin: "0", marginTop: "0.5em" }}
-                  onClick={() => history.push("/datasquare")}
-                >
-                  <Icon name="backward" />
-                  Go back
-                </Button>
-              </Button.Group>
-            </Grid.Column>
-          </Grid.Row>
           <Grid.Row centered columns={2}>
             <Grid.Column width={10} style={{ padding: "1em", paddingLeft: "2em", paddingRight: "0"}}>
               <BubbleChart
@@ -106,24 +103,19 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered style={{ padding: "0"}}>
-            <Grid.Column width={14} style={leftColumnStyle}>
-              <QueryInput
-                table={table}
-                searchOn={searchOn}
-                setSelection={setQuerySelection}
-                setLoading={setLoading}
-              />
+            <Grid.Column width={14} style={{ height: "40vh"}}>
               <DataList table={table} layout={layout} selection={selection} loading={loading} />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row centered style={{ padding: "0"}}>
-            <Grid.Column width={14} style={leftColumnStyle}>
-              <Button onClick={() => donateData()}>Donate your data!</Button>
             </Grid.Column>
           </Grid.Row>
       </Grid>
     </ColoredBackgroundGrid>
-  );
+    <Segment style={{background: "white", textAlign: "center", position: "absolute", bottom: "0px", width: "100%", zIndex: 4}}>
+            <Button size="huge"
+              style={{color: "deeppink", background: "gold", width: "80%", boxShadow: "5px 5px 2px grey"}}
+              onClick={() => donateData()}>Donate Your Data & Discover 10 facts about your online-self!</Button>
+          </Segment>
+    </Fragment>
+);
 };
 
 HistoryDashboard.propTypes = propTypes;

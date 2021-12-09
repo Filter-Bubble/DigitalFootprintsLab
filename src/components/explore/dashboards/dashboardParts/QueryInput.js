@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Button, Input } from "semantic-ui-react";
@@ -37,7 +37,6 @@ const QueryInput = ({ table, searchOn, setSelection, setLoading }) => {
 
   return (
     <Input
-      fluid
       label="Search data"
       loading={selectionStatus === "searching"}
       value={search}
@@ -45,7 +44,6 @@ const QueryInput = ({ table, searchOn, setSelection, setLoading }) => {
         <Button
           icon="close"
           onClick={() => setSearch("")}
-          size="huge"
         />
       }
       onChange={(e, d) => setSearch(d.value)}
