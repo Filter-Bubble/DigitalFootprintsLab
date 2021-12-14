@@ -4,7 +4,7 @@ export default createClassFromSpec({spec: {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 700,
   "height": 420,
-  "padding": 0,
+  "padding": -10,
   "autosize": "none",
 
   "data": [
@@ -57,7 +57,7 @@ export default createClassFromSpec({spec: {
         "enter": {
           "shape": {"value": "circle"},
           "fill": {"scale": "color", "field": "depth"},
-          "tooltip": {"signal": "datum.name + (datum.size ? ', ' + datum.size + ' bytes' : '')"}
+          "tooltip": {"signal": "datum.name"}
         },
         "update": {
           "x": {"field": "x"},
@@ -77,13 +77,18 @@ export default createClassFromSpec({spec: {
     //   "from": {"data": "tree"},
     //   "encode": {
     //     "enter": {
-    //       "url": {"signal": "datum.count > 500 ? '/favicon/' + datum.name + '.ico' : ''"},
-    //       "x": {"field": "x"},
-    //       "y": {"field": "y"},
-    //       "width": {"value": 32},
-    //       "height": {"value": 32},
+    //       "url": {"signal": "datum.count > 100 ? '/favicon/' + datum.name + '.ico' : ''"},
+    //       "tooltip": {"signal": "datum.name"}
     //     },
     //     "update": {
+    //       "x": {"signal": "datum.x - min(datum.r, 32) / 2"},
+    //       "y": {"signal": "datum.y - min(datum.r, 32) / 2"},
+    //       "width": {"signal": "min(datum.r, 32)"},
+    //       "height": {"signal": "min(datum.r, 32)"},
+    //     },
+    //     "hover": {
+    //       "stroke": {"value": "red"},
+    //       "strokeWidth": {"value": 2}
     //     }
     //   }
     // }

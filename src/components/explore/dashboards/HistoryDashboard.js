@@ -111,8 +111,8 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
     </ColoredBackgroundGrid>
     <Segment style={{background: "white", textAlign: "center", position: "absolute", bottom: "0px", width: "100%", zIndex: 4}}>
             <Button size="huge"
-              style={{color: "deeppink", background: "gold", width: "80%", boxShadow: "5px 5px 2px grey"}}
-              onClick={() => donateData()}>Donate Your Data & Discover 10 facts about your online-self!</Button>
+              style={{color: "white", background: "green", width: "80%", boxShadow: "5px 5px 2px grey"}}
+              onClick={() => donateData()}>Donate your data & discover 10 facts about your online self!</Button>
           </Segment>
     </Fragment>
 );
