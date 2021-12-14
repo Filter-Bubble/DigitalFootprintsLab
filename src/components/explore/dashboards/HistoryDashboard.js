@@ -65,7 +65,7 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
 
   const donateData = () => {
     //TODO: submit filtered data
-    history.push("/goodies");
+    history.push(`${process.env.PUBLIC_URL}/goodies`);
   }
 
   return (
@@ -74,7 +74,7 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
       <Segment>
         <Button
           style={{ background: "#ffffff", margin: "0", float: "left" }}
-          onClick={() => history.push("/datasquare")}>
+          onClick={() => history.push(`${process.env.PUBLIC_URL}/datasquare`)}>
           <Icon name="backward" />
           Go back
         </Button>

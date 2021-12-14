@@ -80,7 +80,7 @@ const GoodiesDashboard = ({ searchOn, layout, table, cloudKey }) => {
               <Button.Group floated="right">
                 <Button
                   style={{ background: "#ffffff", margin: "0", marginTop: "0.5em" }}
-                  onClick={() => history.push("/datasquare")}
+                  onClick={() => history.push(`${process.env.PUBLIC_URL}/datasquare`)}
                 >
                   <Icon name="backward" />
                   Go back
