@@ -17,11 +17,11 @@ import GoodiesView from "./components/explore/GoodiesView";
 // Change to add new components to the header
 // The first item will be the opening page after login
 const items = [
-  { label: "Data square", path: "/datasquare", Component: DataSquare },
-  { label: "Browsing History", path: "/browsinghistory", Component: BrowsingHistory },
-  { label: "Search", path: "/searchhistory", Component: SearchHistory },
-  { label: "Youtube", path: "/youtube", Component: YoutubeHistory },
-  { label: "Goodies", path: "/goodies", Component: GoodiesView },
+  { label: "Data square", path: `${process.env.PUBLIC_URL}/datasquare`, Component: DataSquare },
+  { label: "Browsing History", path: `${process.env.PUBLIC_URL}/browsinghistory`, Component: BrowsingHistory },
+  { label: "Search", path: `${process.env.PUBLIC_URL}/searchhistory`, Component: SearchHistory },
+  { label: "Youtube", path: `${process.env.PUBLIC_URL}/youtube`, Component: YoutubeHistory },
+  { label: "Goodies", path: `${process.env.PUBLIC_URL}/goodies`, Component: GoodiesView },
 ];
 
 const App = () => {
@@ -36,7 +36,7 @@ const App = () => {
       <BrowserRouter>
         <HeaderMenu items={items}>
           <Switch>
-            <Route exact path={"/"} render={() => <Welcome items={items} />} />
+            <Route exact path={`${process.env.PUBLIC_URL}/`} render={() => <Welcome items={items} />} />
             {createNavigation(items)}
           </Switch>
         </HeaderMenu>

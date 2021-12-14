@@ -32,7 +32,7 @@ const AuthRoute = ({ Component, ...componentProps }) => {
         ) : hasdb ? (
           <Component {...componentProps} {...props} />
         ) : (
-          <Redirect to={"/"} />
+          <Redirect to={`${process.env.PUBLIC_URL}/`} />
         )
       }
     />
