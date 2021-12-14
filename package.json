@@ -2,6 +2,7 @@
   "name": "digitalfootprints",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://filter-bubble.github.io/DigitalFootprintsLab/",
   "dependencies": {
     "@nivo/calendar": "^0.72.0",
     "@nivo/core": "^0.72.0",
