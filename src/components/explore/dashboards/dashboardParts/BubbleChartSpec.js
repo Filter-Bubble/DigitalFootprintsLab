@@ -37,6 +37,13 @@ export default createClassFromSpec({spec: {
       "on": [
         { "events": "click", "update": "datum", "force": "true" }
       ]
+    },
+    {
+      "name": "filterDatum",
+      "value": {},
+      "on": [
+        { "events": "*:dblclick", "update": "datum", "force": "true" }
+      ]
     }
   ],
 

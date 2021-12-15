@@ -7,7 +7,6 @@ import ColoredBackgroundGrid from "./dashboardParts/ColoredBackgroundGrid";
 import DataList from "./dashboardParts/DataList";
 import QueryInput from "./dashboardParts/QueryInput";
 import Statistics from "./dashboardParts/Statistics";
-//import KeyCloud from "./dashboardParts/KeyCloud";
 import BubbleChart from "./dashboardParts/BubbleChart";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
@@ -37,31 +36,11 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
   // but i'm sure there are better solutions
   const [selection, setSelection] = useState(null);
   const [querySelection, setQuerySelection] = useState(null);
-
-  // for the key and time selections we need both in and out selections
-  // the in selection is the combined selection of other filters
-  // the out selection is the selection based on the filter itself
-  // (this way the out selection does not need to be updated if the in selection changes,
-  //  and visualizations like word clouds also need to show the non-selected items)
-  const [keyInSelection, setKeyInSelection] = useState(null);
-  const [keyOutSelection, setKeyOutSelection] = useState(null);
-  const [timeInSelection, setTimeInSelection] = useState(null);
-  const [timeOutSelection, setTimeOutSelection] = useState(null);
+  const [domainSelection, setDomainSelection] = useState(null);
 
   useEffect(() => {
-    console.log(keyOutSelection);
-    console.log(timeOutSelection);
-    console.log(intersect([querySelection, keyOutSelection, timeOutSelection]));
-    setSelection(intersect([querySelection, keyOutSelection, timeOutSelection]));
-  }, [querySelection, keyOutSelection, timeOutSelection]);
-
-  useEffect(() => {
-    setKeyInSelection(intersect([querySelection, timeOutSelection]));
-  }, [querySelection, timeOutSelection]);
-
-  useEffect(() => {
-    setTimeInSelection(intersect([querySelection, keyOutSelection]));
-  }, [querySelection, keyOutSelection]);
+    setSelection(intersect([querySelection, domainSelection]));
+  }, [querySelection, domainSelection]);
 
   const donateData = () => {
     //TODO: submit filtered data
@@ -92,10 +71,10 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
               <BubbleChart
                 table={table}
                 field={cloudKey}
-                inSelection={keyInSelection}
+                inSelection={selection}
                 nWords={50}
                 loading={loading}
-                setOutSelection={setKeyOutSelection}
+                setOutSelection={setDomainSelection}
               />
             </Grid.Column>
             <Grid.Column width={4} style={{ padding: "1em", paddingLeft: "0" }}>

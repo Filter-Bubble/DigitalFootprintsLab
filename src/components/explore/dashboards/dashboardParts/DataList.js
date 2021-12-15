@@ -131,7 +131,6 @@ const DataList = ({ table, layout, selection, loading }) => {
 
 const fetchFromDb = async (table, pageSize, setN, setSelectionN, setData, selection) => {
   let n = await db.getTableN(table);
-  console.log(selection);
   setSelectionN(selection === null ? n : selection.length);
   setN(n);
   let newdata = [];

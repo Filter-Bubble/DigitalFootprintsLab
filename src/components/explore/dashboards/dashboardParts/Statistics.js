@@ -19,7 +19,6 @@ const Statistics = ({selection, loading }) => {
   const [loadingData, setLoadingData] = useState(false);
 
   useEffect(() => {
-    console.log("Selection Statistics: ", selection);
     fetchFromDb(setData, setLoadingData, selection);
   }, [selection, setData]);
 
