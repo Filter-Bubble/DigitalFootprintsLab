@@ -3,6 +3,7 @@ import { PropTypes } from "prop-types";
 import db from "apis/dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import BubbleChartSpec from './BubbleChartSpec';
+import ConfirmModal from "./ConfirmModal";
 import { Card, Button, Image } from "semantic-ui-react";
 
 const propTypes = {
@@ -28,6 +29,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   const [data, setData] = useState({tree: []});
   const [loadingData, setLoadingData] = useState(false);
   const [selectedDatum, setSelectedDatum] = useState(null);
+  const [confirm, setConfirm] = useState({ open: false, ask: true, itemIds: [] });
 
   const n = useLiveQuery(() => db.idb.table(table).count());
 
@@ -40,7 +42,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   }
 
   const deleteSelectedDatum = () => {
-    console.log("delete");
+    setConfirm({ ...confirm, open: true, itemIds: selectedDatum.ids });
     setSelectedDatum(null);
   };
 
@@ -84,6 +86,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
           </Card.Content>
         </Card>
       </div>}
+      <ConfirmModal table={table} confirm={confirm} setConfirm={setConfirm} />
     </div>
   );
 }
@@ -107,10 +110,11 @@ const prepareData = async (table, field, selection, setData, setLoadingData, set
 
         // Domain entry
         if (keyTotalObj[key] === undefined) {
-          keyTotalObj[key] = { name: key, parent: "root", count: 1 };
+          keyTotalObj[key] = { name: key, parent: "root", count: 1, ids: [entry.id] };
         }
         else {
           keyTotalObj[key].count++;
+          keyTotalObj[key].ids.push(entry.id);
         }
 
         // // Url entry
