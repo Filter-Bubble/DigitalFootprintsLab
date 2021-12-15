@@ -92,10 +92,11 @@ const fetchFromDb = async (setData, setLoadingData, selection) => {
     counts = counts.sortBy('domain_count', true);
 
     const statistics = {};
-    statistics['total_visits'] = data.count();
-    statistics['max'] = counts.stat.max('domain_count');
-    statistics['max_domain'] = counts.getRow(0).get("domain");
-    statistics['mean'] = Math.round(counts.stat.mean("domain_count"));
+    const total_visits = data.count();
+    statistics['total_visits'] = total_visits;
+    statistics['max'] = total_visits && counts.stat.max('domain_count');
+    statistics['max_domain'] = total_visits && counts.getRow(0).get("domain");
+    statistics['mean'] = total_visits && Math.round(counts.stat.mean("domain_count"));
     statistics['num_domains'] = counts.count();
     statistics['youtube'] = await db.getTableN("youtube");
     statistics['search'] = await db.getTableN("searchhistory");
