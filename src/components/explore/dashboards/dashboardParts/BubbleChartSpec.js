@@ -3,8 +3,8 @@ import { createClassFromSpec } from 'react-vega';
 export default createClassFromSpec({spec: {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 700,
-  "height": 420,
-  "padding": -10,
+  "height": 480,
+  "padding": 0,
   "autosize": "none",
 
   "data": [

@@ -90,11 +90,11 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
       { selectedDatum && <div style={popupStyle}>
         <Card>
           <Card.Content>
-            <Image
+            { selectedDatum.logo && <Image
               floated='left'
               size='mini'
-              src='/favicon.ico' //TODO
-            />
+              src={selectedDatum.logo}
+            /> }
             <Button
               basic
               floated='right'
@@ -104,7 +104,10 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
             />
             <Card.Header>{selectedDatum.name}</Card.Header>
             <Card.Meta>{`${selectedDatum.count} visits`}</Card.Meta>
-            <Card.Description>Category: TODO</Card.Description>
+            <Card.Description>
+              <p>{ selectedDatum.title && selectedDatum.title }</p>
+              <p>Category: {selectedDatum.category ? selectedDatum.category : 'unknown'}</p>
+            </Card.Description>
           </Card.Content>
           <Card.Content extra>
             <div className='ui two buttons'>
@@ -123,6 +126,14 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   );
 }
 
+const generateToken = async (key, urls) => {
+  var message = ([key].concat(urls)).join("|");
+  const msgBuffer = new TextEncoder().encode(message);                    
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
 const prepareData = async (table, field, selection, setData, setLoadingData, zoomlevelUrls) => {
   setLoadingData(true);
 
@@ -135,6 +146,7 @@ const prepareData = async (table, field, selection, setData, setLoadingData, zoo
   let collection =
     selection === null ? await t.toCollection() : await t.where("id").anyOf(selection);
 
+  let domainObjects = [];
 
   await collection.each((entry) => {
     let keys = Array.isArray(entry[field]) ? entry[field] : [entry[field]];
@@ -144,7 +156,13 @@ const prepareData = async (table, field, selection, setData, setLoadingData, zoo
 
         // Domain entry
         if (keyTotalObj[key] === undefined) {
-          keyTotalObj[key] = { name: key, parent: "root", count: 1, ids: [entry.id] };
+          keyTotalObj[key] = {
+            name: key,
+            parent: "root",
+            count: 1,
+            ids: [entry.id]
+          };
+          domainObjects.push(keyTotalObj[key]); // collect domains
         }
         else {
           keyTotalObj[key].count++;
@@ -156,7 +174,13 @@ const prepareData = async (table, field, selection, setData, setLoadingData, zoo
           const url = entry['url'];
           if (url !== key) {
             if (keyTotalObj[url] === undefined) {
-              keyTotalObj[url] = { name: url, parent: key, count: 1, ids: [entry.id] }
+              keyTotalObj[url] = {
+                name: url,
+                title: entry.title,
+                parent: key,
+                count: 1,
+                ids: [entry.id]
+              }
             }
             else {
               keyTotalObj[url].count++;
@@ -167,6 +191,29 @@ const prepareData = async (table, field, selection, setData, setLoadingData, zoo
       }
     }
   });
+  domainObjects = domainObjects
+    .map(obj => obj.count > 500 ? obj : null)
+    .filter(obj => obj !== null && obj.name !== 'localhost' && obj.name !== 'newtab');
+  const domains = domainObjects.map(obj => obj.name);
+  const token = await generateToken('1234', domains);
+  const url = `https://ifb.sharkwing.com/domaininfo/?${ domains.map(domain => `url=${domain}`).join('&') }&token=${token}`
+  console.log(token, url);
+//  https://ifb.sharkwing.com/domaininfo/?url=youtube.com&url=newtab&url=localhost&url=github.com&url=facebook.com&url=office.com&url=google.com&url=feedly.com&url=nu.nl&url=nos.nl&url=flowkey.com&url=springreizen.nl&token=d330929b9e776644ce09a31a0c647581d0b40c8b471768f6a0858076a43de9b1
+//  fetch("https://dd.amcat.nl?url=twitter.com&url=www.mediamarkt.nl&url=marktplaats.nl&token=0ba1a1bee7a0d44a1be0c2d293f9f737c9f912a6b8a593b37e884429b3f9b9d4")
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+      for (const [key, value] of Object.entries(data)) {
+        keyTotalObj[key].category = value.category;
+        keyTotalObj[key].logo = value.logo;
+      }
+
+      let keyTotal = [{name: "root"}, ...Object.values(keyTotalObj)];
+      setData({ tree: keyTotal });
+    
+    })
+    .catch(err => console.log(err));
 
   let keyTotal = [{name: "root"}, ...Object.values(keyTotalObj)];
   setData({ tree: keyTotal });
