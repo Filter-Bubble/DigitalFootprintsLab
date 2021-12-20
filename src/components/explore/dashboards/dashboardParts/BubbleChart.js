@@ -157,10 +157,12 @@ const prepareData = async (table, field, selection, setData, setLoadingData, zoo
         // Domain entry
         if (keyTotalObj[key] === undefined) {
           keyTotalObj[key] = {
+            type: 'domain',
             name: key,
             parent: "root",
             count: 1,
-            ids: [entry.id]
+            ids: [entry.id],
+            category: ["Kennis", "Winkelen", "Nieuws"][Math.floor(Math.random() * 3)]
           };
           domainObjects.push(keyTotalObj[key]); // collect domains
         }
@@ -175,6 +177,7 @@ const prepareData = async (table, field, selection, setData, setLoadingData, zoo
           if (url !== key) {
             if (keyTotalObj[url] === undefined) {
               keyTotalObj[url] = {
+                type: 'url',
                 name: url,
                 title: entry.title,
                 parent: key,
@@ -192,32 +195,38 @@ const prepareData = async (table, field, selection, setData, setLoadingData, zoo
     }
   });
   domainObjects = domainObjects
-    .map(obj => obj.count > 500 ? obj : null)
-    .filter(obj => obj !== null && obj.name !== 'localhost' && obj.name !== 'newtab');
-  const domains = domainObjects.map(obj => obj.name);
-  const token = await generateToken('1234', domains);
-  const url = `https://ifb.sharkwing.com/domaininfo/?${ domains.map(domain => `url=${domain}`).join('&') }&token=${token}`
-  console.log(token, url);
-//  https://ifb.sharkwing.com/domaininfo/?url=youtube.com&url=newtab&url=localhost&url=github.com&url=facebook.com&url=office.com&url=google.com&url=feedly.com&url=nu.nl&url=nos.nl&url=flowkey.com&url=springreizen.nl&token=d330929b9e776644ce09a31a0c647581d0b40c8b471768f6a0858076a43de9b1
-//  fetch("https://dd.amcat.nl?url=twitter.com&url=www.mediamarkt.nl&url=marktplaats.nl&token=0ba1a1bee7a0d44a1be0c2d293f9f737c9f912a6b8a593b37e884429b3f9b9d4")
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-      for (const [key, value] of Object.entries(data)) {
-        keyTotalObj[key].category = value.category;
-        keyTotalObj[key].logo = value.logo;
-      }
+    .filter(obj => obj.count > 500 &&
+      obj.type === 'domain' &&
+      obj.name !== 'localhost' &&
+      obj.name !== 'newtab');
+  if (domainObjects.length > 0) {
+    const domains = domainObjects.map(obj => obj.name);
+    const token = await generateToken('1234', domains);
+    const url = `https://ifb.sharkwing.com/domaininfo/?${ domains.map(domain => `url=${domain}`).join('&') }&token=${token}`
+    console.log(token, url);
+  //  https://ifb.sharkwing.com/domaininfo/?url=youtube.com&url=github.com&url=facebook.com&url=office.com&url=google.com&url=feedly.com&url=nu.nl&url=nos.nl&url=flowkey.com&url=springreizen.nl&token=d330929b9e776644ce09a31a0c647581d0b40c8b471768f6a0858076a43de9b1
+  //  fetch("https://dd.amcat.nl?url=twitter.com&url=www.mediamarkt.nl&url=marktplaats.nl&token=0ba1a1bee7a0d44a1be0c2d293f9f737c9f912a6b8a593b37e884429b3f9b9d4")
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        for (const [key, value] of Object.entries(data)) {
+          keyTotalObj[key].category = value.category;
+          keyTotalObj[key].logo = `/logo/${ value.logo.split('/').slice(-1) }`;
+        }
 
-      let keyTotal = [{name: "root"}, ...Object.values(keyTotalObj)];
-      setData({ tree: keyTotal });
-    
-    })
-    .catch(err => console.log(err));
+        let keyTotal = [{name: "root"}, ...Object.values(keyTotalObj)];
+        setData({ tree: keyTotal });
+        setLoadingData(false);
+      })
+      .catch(err => console.log(err));
+  }
+  else {
+    let keyTotal = [{type: 'root', name: 'root'}, ...Object.values(keyTotalObj)];
+    setData({ tree: keyTotal });
+    setLoadingData(false);
+  }
 
-  let keyTotal = [{name: "root"}, ...Object.values(keyTotalObj)];
-  setData({ tree: keyTotal });
-  setLoadingData(false);
 };
 
 BubbleChart.propTypes = propTypes;
