@@ -202,11 +202,17 @@ const prepareData = async (table, field, selection, setData, setLoadingData, zoo
   if (domainObjects.length > 0) {
     const domains = domainObjects.map(obj => obj.name);
     const token = await generateToken('1234', domains);
-    const url = `https://ifb.sharkwing.com/domaininfo/?${ domains.map(domain => `url=${domain}`).join('&') }&token=${token}`
-    console.log(token, url);
-  //  https://ifb.sharkwing.com/domaininfo/?url=youtube.com&url=github.com&url=facebook.com&url=office.com&url=google.com&url=feedly.com&url=nu.nl&url=nos.nl&url=flowkey.com&url=springreizen.nl&token=d330929b9e776644ce09a31a0c647581d0b40c8b471768f6a0858076a43de9b1
-  //  fetch("https://dd.amcat.nl?url=twitter.com&url=www.mediamarkt.nl&url=marktplaats.nl&token=0ba1a1bee7a0d44a1be0c2d293f9f737c9f912a6b8a593b37e884429b3f9b9d4")
-    fetch(url)
+    const body = {
+      token,
+      urls: domains
+    };
+    fetch('https://dd.amcat.nl', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body),
+    })
       .then(res => res.json())
       .then(data => {
         console.log(data);
