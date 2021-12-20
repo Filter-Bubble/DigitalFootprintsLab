@@ -67,7 +67,7 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
       </Segment>
       <Grid divided={"vertically"} style={gridStyle}>
           <Grid.Row centered columns={2}>
-            <Grid.Column width={10} style={{ padding: "1em", paddingLeft: "2em", paddingRight: "0"}}>
+            <Grid.Column width={10} style={{ paddingLeft: "2em", paddingRight: "0"}}>
               <BubbleChart
                 table={table}
                 field={cloudKey}
@@ -77,7 +77,7 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
                 setOutSelection={setDomainSelection}
               />
             </Grid.Column>
-            <Grid.Column width={4} style={{ padding: "1em", paddingLeft: "0" }}>
+            <Grid.Column width={4} style={{ paddingLeft: "0" }}>
               <Statistics table={table} layout={layout} selection={selection} loading={loading} />
             </Grid.Column>
           </Grid.Row>
