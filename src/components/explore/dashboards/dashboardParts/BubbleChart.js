@@ -4,6 +4,8 @@ import db from "apis/dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import BubbleChartSpec from './BubbleChartSpec';
 import ConfirmModal from "./ConfirmModal";
+import { useDomainInfo } from "./DomainInfo";
+import {useDatabaseEntries } from "./DatabaseEntries";
 import { Card, Button, Image, Dimmer, Loader } from "semantic-ui-react";
 
 const propTypes = {
@@ -25,13 +27,14 @@ const propTypes = {
  * Makes a wordcloud for keys, for a given table:field in db
  */
 const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelection }) => {
-  const [data, setData] = useState({tree: []});
+  const [data, setData] = useState({tree: []}); // input for vega visualization
   const [loadingData, setLoadingData] = useState(false);
   const [selectedDatum, setSelectedDatum] = useState(null);
   const [confirm, setConfirm] = useState({ open: false, ask: true, itemIds: [] });
   const [filteredDatum, setFilteredDatum] = useState(null);
   const [zoomlevelUrls, setZoomlevelUrls] = useState(false);
-
+  const [domainInfoStats, domainInfo] = useDomainInfo([]);
+  const [databaseLoading, keyTotalObj] = useDatabaseEntries(table, field);
   const n = useLiveQuery(() => db.idb.table(table).count());
 
   useEffect(() => {
@@ -40,14 +43,29 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   }, [filteredDatum, setOutSelection]);
 
   useEffect(() => {
-    prepareData(table, field, inSelection, setData, setLoadingData, zoomlevelUrls);
-  }, [table, field, inSelection, setData, n, setLoadingData, zoomlevelUrls]);
+    let nodes = Object.values(keyTotalObj);
+    console.log(nodes.length);
+    if (inSelection !== null) {
+      nodes = nodes.filter(obj => inSelection.includes(obj.id));
+    }
+    console.log(nodes.length);
+    if (!zoomlevelUrls) {
+      nodes = nodes.filter(obj => obj.type !== 'url');
+    }
+    console.log(nodes.length);
+    let keyTotal = [
+      {type: 'root', name: 'root'}, 
+      ...nodes
+    ];
+    setData({ tree: keyTotal });
+  }, [keyTotalObj, inSelection, zoomlevelUrls]);
 
   // Vega signal handler
   const onSelectedDatum = (signal, datum) => {
     if (datum === null) {
       setFilteredDatum(null);
     }
+
     setSelectedDatum(datum);
   }
 
@@ -126,114 +144,15 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
   );
 }
 
-const generateToken = async (key, urls) => {
-  var message = ([key].concat(urls)).join("|");
-  const msgBuffer = new TextEncoder().encode(message);                    
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-};
-
-const prepareData = async (table, field, selection, setData, setLoadingData, zoomlevelUrls) => {
-  setLoadingData(true);
-
-  if (zoomlevelUrls && selection === null) return;
-
-  let keyTotalObj = {};
-
-  let t = await db.idb.table(table);
-
-  let collection =
-    selection === null ? await t.toCollection() : await t.where("id").anyOf(selection);
-
-  let domainObjects = [];
-
-  await collection.each((entry) => {
-    let keys = Array.isArray(entry[field]) ? entry[field] : [entry[field]];
-    for (let key of keys) {
-      if (key !== "") {
-        key = key.split('.').slice(-2).join('.')
-
-        // Domain entry
-        if (keyTotalObj[key] === undefined) {
-          keyTotalObj[key] = {
-            type: 'domain',
-            name: key,
-            parent: "root",
-            count: 1,
-            ids: [entry.id],
-            category: ["Kennis", "Winkelen", "Nieuws"][Math.floor(Math.random() * 3)]
-          };
-          domainObjects.push(keyTotalObj[key]); // collect domains
-        }
-        else {
-          keyTotalObj[key].count++;
-          keyTotalObj[key].ids.push(entry.id);
-        }
-
-        // Url entry (only when filtering on a datum / domain)
-        if (zoomlevelUrls && selection.includes(entry.id)) {
-          const url = entry['url'];
-          if (url !== key) {
-            if (keyTotalObj[url] === undefined) {
-              keyTotalObj[url] = {
-                type: 'url',
-                name: url,
-                title: entry.title,
-                parent: key,
-                count: 1,
-                ids: [entry.id]
-              }
-            }
-            else {
-              keyTotalObj[url].count++;
-              keyTotalObj[url].ids.push(entry.id);
-            }
-          }
-        }
-      }
-    }
-  });
-  domainObjects = domainObjects
-    .filter(obj => obj.count > 500 &&
-      obj.type === 'domain' &&
-      obj.name !== 'localhost' &&
-      obj.name !== 'newtab');
-  if (domainObjects.length > 0) {
-    const domains = domainObjects.map(obj => obj.name);
-    const token = await generateToken('1234', domains);
-    const body = {
-      token,
-      urls: domains
-    };
-    fetch('https://dd.amcat.nl', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body),
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        for (const [key, value] of Object.entries(data)) {
-          keyTotalObj[key].category = value.category;
-          keyTotalObj[key].logo = `/logo/${ value.logo.split('/').slice(-1) }`;
-        }
-
-        let keyTotal = [{name: "root"}, ...Object.values(keyTotalObj)];
-        setData({ tree: keyTotal });
-        setLoadingData(false);
-      })
-      .catch(err => console.log(err));
-  }
-  else {
-    let keyTotal = [{type: 'root', name: 'root'}, ...Object.values(keyTotalObj)];
-    setData({ tree: keyTotal });
-    setLoadingData(false);
-  }
-
-};
+// const prepareData = async (table, field, selection, setData, setLoadingData, zoomlevelUrls) => {
+//   domainObjects = domainObjects
+//     .filter(obj => obj.count > 500 &&
+//       obj.type === 'domain' &&
+//       obj.name !== 'localhost' &&
+//       obj.name !== 'newtab');
+//   if (domainObjects.length > 0) {
+//     const domains = domainObjects.map(obj => obj.name);
+// };
 
 BubbleChart.propTypes = propTypes;
 export default React.memo(BubbleChart);
