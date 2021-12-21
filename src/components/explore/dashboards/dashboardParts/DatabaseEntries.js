@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import db from "apis/dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useDomainInfo } from './DomainInfo';
@@ -55,6 +55,7 @@ export const useDatabaseEntries = (table, field) => {
           // Domain entry
           if (keyTotalObj[key] === undefined) {
             const category = domainInfo[key]?.category ? domainInfo[key].category : "Unknown";
+            const logo = domainInfo[key]?.logo ? `/logo/${ domainInfo[key].logo.split('/').slice(-1) }` : `/favicon/${key}.ico`;
             keyTotalObj[key] = {
               id: entry.id,
               type: 'domain',
@@ -63,7 +64,7 @@ export const useDatabaseEntries = (table, field) => {
               count: 1,
               ids: [entry.id],
               category,
-              logo: domainInfo[key]?.logo ? `/logo/${ domainInfo[key].logo.split('/').slice(-1) }` : null
+              logo
             };
           }
           else {
@@ -96,7 +97,7 @@ export const useDatabaseEntries = (table, field) => {
 
     setKeyTotalObj(keyTotalObj);
     setLoadingData(false);
-  }, [entries, field]);
+  }, [domainInfo, entries, field]);
 
   return [ loadingData, keyTotalObj ];
 };

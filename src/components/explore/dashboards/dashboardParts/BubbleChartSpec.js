@@ -84,7 +84,7 @@ export default createClassFromSpec({spec: {
       "from": {"data": "tree"},
       "encode": {
         "enter": {
-          "url": {"signal": "datum.logo"},
+          "url": {"signal": "datum.r < 16 ? '' : datum.logo"},
           "tooltip": {"signal": "datum.name"}
         },
         "update": {
