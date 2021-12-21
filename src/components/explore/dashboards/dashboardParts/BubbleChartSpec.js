@@ -24,7 +24,7 @@ export default createClassFromSpec({spec: {
         },
         {
           "type": "filter",
-          "expr": "datum.name != 'root'"
+          "expr": "datum.name != 'root' && datum.type != 'category'"
         }
       ]
     }

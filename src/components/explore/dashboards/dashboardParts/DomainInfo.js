@@ -11,7 +11,7 @@ const generateToken = async (key, urls) => {
 
 
 export const useDomainInfo = (domains) => {
-  const cache = useRef({});
+  const cacheRef = useRef({});
   const [status, setStatus] = useState('idle');
   const [data, setData] = useState([]);
 
@@ -19,6 +19,7 @@ export const useDomainInfo = (domains) => {
 
     const fetchData = async () => {
       setStatus('fetching');
+      let cache = cacheRef.current;
 
       // Check which domains are in the cache
       const cachedDomains = Object.keys(cache);
@@ -27,6 +28,11 @@ export const useDomainInfo = (domains) => {
         setData(cache);
         setStatus('fetched from cache');
         return;
+      }
+
+      // Create empty entries in cache to prevent refetching if domain is not available in service
+      for (let domain of domainsToFetch) {
+        cache[domain] = {};
       }
 
       // Construct request
