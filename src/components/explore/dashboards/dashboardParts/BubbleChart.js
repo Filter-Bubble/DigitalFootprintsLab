@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { PropTypes } from "prop-types";
-import db from "apis/dexie";
-import { useLiveQuery } from "dexie-react-hooks";
 import BubbleChartSpec from './BubbleChartSpec';
 import ConfirmModal from "./ConfirmModal";
+import { useDomainInfo } from "./DomainInfo";
+import { useDatabaseEntries } from "./DatabaseEntries";
 import { Card, Button, Image, Dimmer, Loader } from "semantic-ui-react";
 
 const propTypes = {
@@ -25,34 +25,74 @@ const propTypes = {
  * Makes a wordcloud for keys, for a given table:field in db
  */
 const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelection }) => {
-  const [data, setData] = useState({tree: []});
+  const [data, setData] = useState({tree: []}); // input for vega visualization
   const [loadingData, setLoadingData] = useState(false);
   const [selectedDatum, setSelectedDatum] = useState(null);
   const [confirm, setConfirm] = useState({ open: false, ask: true, itemIds: [] });
   const [filteredDatum, setFilteredDatum] = useState(null);
-  const [zoomlevelUrls, setZoomlevelUrls] = useState(false);
+  const [databaseLoading, keyTotalObj] = useDatabaseEntries(table, field);
 
-  const n = useLiveQuery(() => db.idb.table(table).count());
-
+  // Update selection
   useEffect(() => {
+    console.log("setting out selection")
     setOutSelection(filteredDatum === null ? null : filteredDatum.ids);
-    setZoomlevelUrls(filteredDatum !== null);
   }, [filteredDatum, setOutSelection]);
 
+  // Filter keyTotalObj for current selection and zoom level
   useEffect(() => {
-    prepareData(table, field, inSelection, setData, setLoadingData, zoomlevelUrls);
-  }, [table, field, inSelection, setData, n, setLoadingData, zoomlevelUrls]);
+    console.log("filtering")
+
+    // Filter
+    let nodes = Object.values(keyTotalObj);
+    console.log(nodes.length);
+    if (inSelection !== null) {
+      nodes = nodes.filter(obj => inSelection.includes(obj.id));
+    }
+    console.log(nodes.length);
+    if (filteredDatum === null) {
+      nodes = nodes.filter(obj => obj.type !== 'url');
+    }
+    console.log(nodes.length);
+
+    // Only include used categories
+    const categories = [...new Set(Object.values(nodes).map(node => node.category))];
+    const cats = [];
+    for (let category of categories) {
+      cats.push({
+        type: 'category',
+        name: category,
+        count: 1,
+        parent: "root"
+      });
+    }
+
+    let keyTotal = [
+      {type: 'root', name: 'root'},
+      ...cats,
+      ...nodes
+    ];
+    console.log(keyTotal);
+    setData({ tree: keyTotal });
+  }, [keyTotalObj, inSelection]); //no, we don't want filteredDatum as dependency
 
   // Vega signal handler
   const onSelectedDatum = (signal, datum) => {
+    console.log("selected ", datum);
     if (datum === null) {
+      // Clicking outside circles will reset filter
       setFilteredDatum(null);
+      setSelectedDatum(null);
     }
-    setSelectedDatum(datum);
+    else {
+      if (datum.type === 'domain' || datum.type === 'url') {
+        setSelectedDatum(datum);
+      }
+    }
   }
 
   // Vega signal handler
   const onFilterDatum = (signal, datum) => {
+    console.log("filter ", datum);
     setFilteredDatum(datum);
     setSelectedDatum(null);
   }
@@ -90,11 +130,11 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
       { selectedDatum && <div style={popupStyle}>
         <Card>
           <Card.Content>
-            <Image
+            { selectedDatum.logo && <Image
               floated='left'
               size='mini'
-              src='/favicon.ico' //TODO
-            />
+              src={selectedDatum.logo}
+            /> }
             <Button
               basic
               floated='right'
@@ -104,7 +144,10 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
             />
             <Card.Header>{selectedDatum.name}</Card.Header>
             <Card.Meta>{`${selectedDatum.count} visits`}</Card.Meta>
-            <Card.Description>Category: TODO</Card.Description>
+            <Card.Description>
+              <p>{ selectedDatum.title && selectedDatum.title }</p>
+              <p>Category: {selectedDatum.category ? selectedDatum.category : 'unknown'}</p>
+            </Card.Description>
           </Card.Content>
           <Card.Content extra>
             <div className='ui two buttons'>
@@ -122,56 +165,6 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
     </div>
   );
 }
-
-const prepareData = async (table, field, selection, setData, setLoadingData, zoomlevelUrls) => {
-  setLoadingData(true);
-
-  if (zoomlevelUrls && selection === null) return;
-
-  let keyTotalObj = {};
-
-  let t = await db.idb.table(table);
-
-  let collection =
-    selection === null ? await t.toCollection() : await t.where("id").anyOf(selection);
-
-
-  await collection.each((entry) => {
-    let keys = Array.isArray(entry[field]) ? entry[field] : [entry[field]];
-    for (let key of keys) {
-      if (key !== "") {
-        key = key.split('.').slice(-2).join('.')
-
-        // Domain entry
-        if (keyTotalObj[key] === undefined) {
-          keyTotalObj[key] = { name: key, parent: "root", count: 1, ids: [entry.id] };
-        }
-        else {
-          keyTotalObj[key].count++;
-          keyTotalObj[key].ids.push(entry.id);
-        }
-
-        // Url entry (only when filtering on a datum / domain)
-        if (zoomlevelUrls && selection.includes(entry.id)) {
-          const url = entry['url'];
-          if (url !== key) {
-            if (keyTotalObj[url] === undefined) {
-              keyTotalObj[url] = { name: url, parent: key, count: 1, ids: [entry.id] }
-            }
-            else {
-              keyTotalObj[url].count++;
-              keyTotalObj[url].ids.push(entry.id);
-            }
-          }
-        }
-      }
-    }
-  });
-
-  let keyTotal = [{name: "root"}, ...Object.values(keyTotalObj)];
-  setData({ tree: keyTotal });
-  setLoadingData(false);
-};
 
 BubbleChart.propTypes = propTypes;
 export default React.memo(BubbleChart);

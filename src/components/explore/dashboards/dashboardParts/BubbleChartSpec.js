@@ -3,8 +3,8 @@ import { createClassFromSpec } from 'react-vega';
 export default createClassFromSpec({spec: {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 700,
-  "height": 420,
-  "padding": -10,
+  "height": 480,
+  "padding": 0,
   "autosize": "none",
 
   "data": [
@@ -24,7 +24,7 @@ export default createClassFromSpec({spec: {
         },
         {
           "type": "filter",
-          "expr": "datum.name != 'root'"
+          "expr": "datum.name != 'root' && datum.type != 'category'"
         }
       ]
     }
@@ -51,7 +51,7 @@ export default createClassFromSpec({spec: {
     {
       "name": "color",
       "type": "ordinal",
-      "domain": {"data": "tree", "field": "depth"},
+      "domain": {"data": "tree", "field": "category"},
       "range": {"scheme": "category20"}
     }
   ],
@@ -63,7 +63,7 @@ export default createClassFromSpec({spec: {
       "encode": {
         "enter": {
           "shape": {"value": "circle"},
-          "fill": {"scale": "color", "field": "depth"},
+          "fill": {"scale": "color", "field": "category"},
           "tooltip": {"signal": "datum.name"}
         },
         "update": {
@@ -79,25 +79,25 @@ export default createClassFromSpec({spec: {
         }
       }
     },
-    // {
-    //   "type": "image",
-    //   "from": {"data": "tree"},
-    //   "encode": {
-    //     "enter": {
-    //       "url": {"signal": "datum.count > 100 ? '/favicon/' + datum.name + '.ico' : ''"},
-    //       "tooltip": {"signal": "datum.name"}
-    //     },
-    //     "update": {
-    //       "x": {"signal": "datum.x - min(datum.r, 32) / 2"},
-    //       "y": {"signal": "datum.y - min(datum.r, 32) / 2"},
-    //       "width": {"signal": "min(datum.r, 32)"},
-    //       "height": {"signal": "min(datum.r, 32)"},
-    //     },
-    //     "hover": {
-    //       "stroke": {"value": "red"},
-    //       "strokeWidth": {"value": 2}
-    //     }
-    //   }
-    // }
+    {
+      "type": "image",
+      "from": {"data": "tree"},
+      "encode": {
+        "enter": {
+          "url": {"signal": "datum.r < 16 ? '' : datum.logo"},
+          "tooltip": {"signal": "datum.name"}
+        },
+        "update": {
+          "x": {"signal": "datum.x - min(datum.r, 32) / 2"},
+          "y": {"signal": "datum.y - min(datum.r, 32) / 2"},
+          "width": {"signal": "min(datum.r, 32)"},
+          "height": {"signal": "min(datum.r, 32)"},
+        },
+        "hover": {
+          "stroke": {"value": "red"},
+          "strokeWidth": {"value": 2}
+        }
+      }
+    }
   ]
 }});
