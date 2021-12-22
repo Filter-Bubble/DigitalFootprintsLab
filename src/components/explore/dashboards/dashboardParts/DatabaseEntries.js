@@ -31,7 +31,6 @@ export const useDatabaseEntries = (table, field) => {
   // List of domains from raw entries
   useEffect(() => {
     console.log(entries);
-    //const domains = ["google.com", "facebook.com", "nu.nl", "github.com"];
     const domains = [...new Set(
       entries.map(e => e['domain'])
       .filter(e => e !== 'localhost' && e !== 'newtab'))
@@ -55,7 +54,7 @@ export const useDatabaseEntries = (table, field) => {
           // Domain entry
           if (keyTotalObj[key] === undefined) {
             const category = domainInfo[key]?.category ? domainInfo[key].category : "Unknown";
-            const logo = domainInfo[key]?.logo ? `/logo/${ domainInfo[key].logo.split('/').slice(-1) }` : `/favicon/${key}.ico`;
+            const logo = domainInfo[key]?.logo ? `https://ifb.sharkwing.com/logo/${ domainInfo[key].logo.split('/').slice(-1) }` : `https://ifb.sharkwing.com/favicon/${key}.ico`;
             keyTotalObj[key] = {
               id: entry.id,
               type: 'domain',
