@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { PropTypes } from "prop-types";
 import BubbleChartSpec from './BubbleChartSpec';
-import ConfirmModal from "./ConfirmModal";
-import { useDomainInfo } from "./DomainInfo";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { useDatabaseEntries } from "./DatabaseEntries";
 import { Card, Button, Image, Dimmer, Loader } from "semantic-ui-react";
 
@@ -26,11 +25,11 @@ const propTypes = {
  */
 const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelection }) => {
   const [data, setData] = useState({tree: []}); // input for vega visualization
-  const [loadingData, setLoadingData] = useState(false);
+//  const [loadingData, setLoadingData] = useState(false);
   const [selectedDatum, setSelectedDatum] = useState(null);
   const [confirm, setConfirm] = useState({ open: false, ask: true, itemIds: [] });
   const [filteredDatum, setFilteredDatum] = useState(null);
-  const [databaseLoading, keyTotalObj] = useDatabaseEntries(table, field);
+  const [loadingData, keyTotalObj] = useDatabaseEntries(table, field);
 
   // Update selection
   useEffect(() => {
@@ -161,7 +160,7 @@ const BubbleChart = ({ table, field, inSelection, nWords, loading, setOutSelecti
           </Card.Content>
         </Card>
       </div>}
-      <ConfirmModal table={table} confirm={confirm} setConfirm={setConfirm} />
+      <ConfirmDeleteModal table={table} confirm={confirm} setConfirm={setConfirm} />
     </div>
   );
 }

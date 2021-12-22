@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   Button, Container, Dimmer, Header, Loader, Segment, Table, Visibility
 } from "semantic-ui-react";
-import ConfirmModal from "./ConfirmModal";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 const PAGESIZE = 25;
 
@@ -123,7 +123,7 @@ const DataList = ({ table, layout, selection, loading }) => {
         </Visibility>
       </Container>
 
-      <ConfirmModal table={table} confirm={confirm} setConfirm={setConfirm} />
+      <ConfirmDeleteModal table={table} confirm={confirm} setConfirm={setConfirm} />
     </Container>
   );
 };
