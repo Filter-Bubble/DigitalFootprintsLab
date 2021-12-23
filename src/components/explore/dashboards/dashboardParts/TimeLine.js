@@ -1,7 +1,7 @@
 import { ResponsiveCalendar } from "@nivo/calendar";
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Dimmer, Grid, Loader } from "semantic-ui-react";
+import { Button, ButtonGroup, Dimmer, Grid, Loader, Header } from "semantic-ui-react";
 import db from "apis/dexie";
 import createColors from "util/createColors";
 
@@ -78,7 +78,7 @@ const TimeLine = ({ table, field, inSelection, loading, setOutSelection }) => {
         paddingTop: "2em",
       }}
     >
-      <Grid.Row centered style={{ padding: "0" }}>
+      <Grid.Row centered style={{ padding: "0", display: "none" }}>
         <ButtonGroup>
           <Button
             primary
@@ -110,11 +110,14 @@ const TimeLine = ({ table, field, inSelection, loading, setOutSelection }) => {
           </Button>
         </ButtonGroup>
       </Grid.Row>
-      <Grid.Row>
+      <Grid.Row centered>
         <Grid.Column
-          width={16}
-          style={{ height: "30em", width: "100%", padding: "0", margin: "0" }}
+          width={14}
+          style={{ height: "30vh", width: "100%", padding: "0", margin: "0" }}
         >
+          <Header as="h1" align={"center"} style={{ color: "white", padding: "0" }}>
+            Activity timeline
+          </Header>
           <Dimmer active={loading || loadingData}>
             <Loader />
           </Dimmer>

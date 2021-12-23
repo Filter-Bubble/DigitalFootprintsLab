@@ -10,7 +10,7 @@ const propTypes = {
   table: PropTypes.string,
 };
 
-const ConfirmModal = ({ table, confirm, setConfirm }) => {
+const ConfirmDeleteModal = ({ table, confirm, setConfirm }) => {
   const [ask, setAsk] = useState(!confirm.ask);
   const n = confirm.itemIds.length;
 
@@ -63,5 +63,5 @@ const ConfirmModal = ({ table, confirm, setConfirm }) => {
   );
 };
 
-ConfirmModal.propTypes = propTypes;
-export default React.memo(ConfirmModal);
+ConfirmDeleteModal.propTypes = propTypes;
+export default React.memo(ConfirmDeleteModal);

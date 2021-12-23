@@ -8,6 +8,8 @@ import DataList from "./dashboardParts/DataList";
 import QueryInput from "./dashboardParts/QueryInput";
 import Statistics from "./dashboardParts/Statistics";
 import BubbleChart from "./dashboardParts/BubbleChart";
+import KeyCloud from "./dashboardParts/KeyCloud";
+import ConfirmDonateModal from "./dashboardParts/ConfirmDonateModal";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
 
@@ -37,14 +39,26 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
   const [selection, setSelection] = useState(null);
   const [querySelection, setQuerySelection] = useState(null);
   const [domainSelection, setDomainSelection] = useState(null);
+  const [keyInSelection, setKeyInSelection] = useState(null);
+  const [keyOutSelection, setKeyOutSelection] = useState(null);
+  
+  const [confirmDonate, setConfirmDonate] = useState({ open: false, itemIds: [] });
 
   useEffect(() => {
+    console.log("intersect")
     setSelection(intersect([querySelection, domainSelection]));
   }, [querySelection, domainSelection]);
 
+  // Navigate to goodies page after donation
+  useEffect(() => {
+    if (confirmDonate.donated) {
+      history.push(`${process.env.PUBLIC_URL}/goodies`);
+    }
+  }, [confirmDonate]);
+
   const donateData = () => {
-    //TODO: submit filtered data
-    history.push(`${process.env.PUBLIC_URL}/goodies`);
+    // Show confirmation dialog, which also handles donation
+    setConfirmDonate({ ...confirmDonate, open: true });
   }
 
   return (
@@ -68,14 +82,26 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
       <Grid divided={"vertically"} style={gridStyle}>
           <Grid.Row centered columns={2}>
             <Grid.Column width={10} style={{ paddingLeft: "2em", paddingRight: "0"}}>
-              <BubbleChart
-                table={table}
-                field={cloudKey}
-                inSelection={selection}
-                nWords={50}
-                loading={loading}
-                setOutSelection={setDomainSelection}
-              />
+              { table === "browsinghistory" &&
+                <BubbleChart
+                  table={table}
+                  field={cloudKey}
+                  inSelection={selection}
+                  nWords={50}
+                  loading={loading}
+                  setOutSelection={setDomainSelection}
+                />
+              }
+              { table !== "browsinghistory" &&
+                  <KeyCloud
+                  table={table}
+                  field={cloudKey}
+                  inSelection={keyInSelection}
+                  nWords={50}
+                  loading={loading}
+                  setOutSelection={setKeyOutSelection}
+                />
+              }
             </Grid.Column>
             <Grid.Column width={4} style={{ paddingLeft: "0" }}>
               <Statistics table={table} layout={layout} selection={selection} loading={loading} />
@@ -89,10 +115,11 @@ const HistoryDashboard = ({ searchOn, layout, table, cloudKey }) => {
       </Grid>
     </ColoredBackgroundGrid>
     <Segment style={{background: "white", textAlign: "center", position: "absolute", bottom: "0px", width: "100%", zIndex: 4}}>
-            <Button size="huge"
-              style={{color: "white", background: "green", width: "80%", boxShadow: "5px 5px 2px grey"}}
-              onClick={() => donateData()}>Donate your data & discover 10 facts about your online self!</Button>
-          </Segment>
+      <Button size="huge"
+        style={{color: "white", background: "green", width: "80%", boxShadow: "5px 5px 2px grey"}}
+        onClick={() => donateData()}>Donate your data & discover 10 facts about your online self!</Button>
+    </Segment>
+    <ConfirmDonateModal confirm={confirmDonate} setConfirm={setConfirmDonate} />
     </Fragment>
 );
 };

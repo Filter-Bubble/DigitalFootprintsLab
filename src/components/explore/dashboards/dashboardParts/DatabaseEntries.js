@@ -21,7 +21,7 @@ const useRawEntries = (table) => {
   return [entries];
 }
 
-export const useDatabaseEntries = (table, field) => {
+export const useDatabaseEntries = (table, field) => { //TODO: I guess this only applies for field === 'domain'
   const [loadingData, setLoadingData] = useState(false);
   const [keyTotalObj, setKeyTotalObj] = useState({});
   const [entries] = useRawEntries(table);
