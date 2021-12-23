@@ -25,10 +25,10 @@ const FunFacts = ({selection, loading}) => {
       <Dimmer active={loading || loadingData}>
         <Loader />
       </Dimmer>
-      <Header as="h1" align={"center"} style={{ color: "white", padding: "0", margin: "0" }}>
+      <Header as="h1" align={"center"} style={{ color: "white" }}>
         Fun Facts
       </Header>
-      <Card.Group>
+      <Card.Group centered>
         <Card>
           <Card.Content>
             <Card.Header>Most active</Card.Header>

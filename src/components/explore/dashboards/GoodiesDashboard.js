@@ -1,25 +1,13 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import { Button, Grid, Icon } from "semantic-ui-react";
+import { Button, Grid, Icon, Segment, Header } from "semantic-ui-react";
 import intersect from "util/intersect";
 import ColoredBackgroundGrid from "./dashboardParts/ColoredBackgroundGrid";
-import DataList from "./dashboardParts/DataList";
-import QueryInput from "./dashboardParts/QueryInput";
-import Statistics from "./dashboardParts/Statistics";
-//import KeyCloud from "./dashboardParts/KeyCloud";
-import BubbleChart from "./dashboardParts/BubbleChart";
 import TimeLine from "./dashboardParts/TimeLine";
 import FunFacts from "./fun/FunFacts";
 
 const gridStyle = { paddingTop: "0em", marginTop: "0em", height: "90vh" };
-const leftColumnStyle = {
-  paddingLeft: "2em",
-  paddingRight: "1em",
-  paddingTop: "0",
-  borderRight: "2px solid white",
-  height: "100vh",
-};
 
 const propTypes = {
   /** an Array indicating which fields in table should be used in the fulltext search */
@@ -74,35 +62,41 @@ const GoodiesDashboard = ({ searchOn, layout, table, cloudKey }) => {
 
   return (
     <ColoredBackgroundGrid color={"#000000b0"}>
+      <Segment>
+        <Button
+          style={{ background: "#ffffff", margin: "0"}}
+          onClick={() => history.push(`${process.env.PUBLIC_URL}/datasquare`)}>
+          <Icon name="backward" />
+          Go back
+        </Button>
+      </Segment>
       <Grid divided={"vertically"} style={gridStyle}>
-        <Grid.Row columns={1} style={{ paddingBottom: "0", paddingRight: "0" }} textAlign="right">
-          <Grid.Column style={{ padding: "0", paddingLeft: "1em", paddingRight: "1em" }}>
-              <Button.Group floated="right">
-                <Button
-                  style={{ background: "#ffffff", margin: "0", marginTop: "0.5em" }}
-                  onClick={() => history.push(`${process.env.PUBLIC_URL}/datasquare`)}
-                >
-                  <Icon name="backward" />
-                  Go back
-                </Button>
-              </Button.Group>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <TimeLine
-              table={table}
-              field={"date"}
-              inSelection={timeInSelection}
-              loading={loading}
-              setOutSelection={setTimeOutSelection}
-          />
-          </Grid.Row>
-          <Grid.Row columns={2}>
+        <Grid.Row centered columns={1}>
+          <Grid.Column width={16} style={{ margin: "0", textAlign: "center" }}>
+            <Header as="h1" align={"center"} style={{ color: "white", padding: "0" }}>
+              Thank you!!
+            </Header>
+            <iframe src="https://giphy.com/embed/3o7TKQ7ql1zNlTarXa" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen title="giphy"></iframe>
+            <p><a href="https://giphy.com/gifs/Originals-internet-3o7TKQ7ql1zNlTarXa">via GIPHY</a></p>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row centered columns={1}>
+          <Grid.Column width={16} style={{ margin: "0" }}>
             <FunFacts
               selection={selection}
               loading={loading}
             />
-          </Grid.Row>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row style={{ margin: "0" }}>
+          <TimeLine
+            table={table}
+            field={"date"}
+            inSelection={timeInSelection}
+            loading={loading}
+            setOutSelection={setTimeOutSelection}
+        />
+        </Grid.Row>
       </Grid>
     </ColoredBackgroundGrid>
   );
